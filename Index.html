@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Apple Browser</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="browser-container">
+        <!-- Header mit Logo -->
+        <div class="header">
+            <h1>🍏 Green Apple Browser</h1>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="navbar">
+            <button id="back-btn">← Zurück</button>
+            <button id="forward-btn">Vorwärts →</button>
+            <button id="reload-btn">⟲ Neu laden</button>
+            <input type="text" id="url-input" placeholder="URL eingeben (z.B. https://google.com)">
+            <button id="go-btn">Go</button>
+        </div>
+
+        <!-- Browser Display Area -->
+        <div class="browser-content">
+            <iframe id="browser-frame" src="https://www.google.com"></iframe>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
