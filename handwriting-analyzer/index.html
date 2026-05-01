@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwriting Script Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✒️ Handwriting Script Analyzer</h1>
+            <p class="subtitle">Analysiert und konvertiert Text in verschiedene Schreibstile</p>
+        </header>
+
+        <main class="content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="form-group">
+                    <label for="textInput">Text eingeben:</label>
+                    <textarea 
+                        id="textInput" 
+                        placeholder="Geben Sie hier Ihren Text ein..."
+                        rows="5"></textarea>
+                </div>
+
+                <!-- Style Selection -->
+                <div class="form-group">
+                    <label>Schreibstil wählen:</label>
+                    <div class="style-buttons">
+                        <button class="style-btn active" data-style="print">
+                            <span class="style-preview">A</span>
+                            <span class="style-name">Normal</span>
+                        </button>
+                        <button class="style-btn" data-style="cursive">
+                            <span class="style-preview">𝒜</span>
+                            <span class="style-name">Cursive</span>
+                        </button>
+                        <button class="style-btn" data-style="italic">
+                            <span class="style-preview">𝘈</span>
+                            <span class="style-name">Italic</span>
+                        </button>
+                        <button class="style-btn" data-style="decorative">
+                            <span class="style-preview">𝓐</span>
+                            <span class="style-name">Dekorativ</span>
+                        </button>
+                        <button class="style-btn" data-style="fraktur">
+                            <span class="style-preview">𝔄</span>
+                            <span class="style-name">Fraktur</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Characteristics Sliders -->
+                <div class="characteristics-group">
+                    <h3>Handschrift-Charakteristiken</h3>
+                    
+                    <div class="slider-group">
+                        <label for="slantSlider">Neigungswinkel: <span id="slantValue">0</span>°</label>
+                        <input type="range" id="slantSlider" min="-45" max="45" value="0" class="slider">
+                    </div>
+
+                    <div class="slider-group">
+                        <label for="spacingSlider">Zeilenabstand: <span id="spacingValue">1.0</span></label>
+                        <input type="range" id="spacingSlider" min="0.5" max="2" step="0.1" value="1" class="slider">
+                    </div>
+
+                    <div class="slider-group">
+                        <label for="heightSlider">Buchstabenhöhe: <span id="heightValue">1.0</span></label>
+                        <input type="range" id="heightSlider" min="0.5" max="2" step="0.1" value="1" class="slider">
+                    </div>
+
+                    <div class="slider-group">
+                        <label for="widthSlider">Buchstabenbreite: <span id="widthValue">1.0</span></label>
+                        <input type="range" id="widthSlider" min="0.5" max="2" step="0.1" value="1" class="slider">
+                    </div>
+
+                    <div class="slider-group">
+                        <label for="pressureSlider">Druckstärke: <span id="pressureValue">50</span>%</label>
+                        <input type="range" id="pressureSlider" min="0" max="100" value="50" class="slider">
+                    </div>
+                </div>
+
+                <button id="analyzeBtn" class="btn-primary">Analysieren & Konvertieren</button>
+            </section>
+
+            <!-- Output Section -->
+            <section class="output-section">
+                <!-- Converted Text Display -->
+                <div class="output-card">
+                    <h2>Konvertierter Text</h2>
+                    <div id="convertedOutput" class="converted-text-display">
+                        Konvertierter Text wird hier angezeigt...
+                    </div>
+                    <button id="copyBtn" class="btn-secondary">In Zwischenablage kopieren</button>
+                </div>
+
+                <!-- Analysis Report -->
+                <div class="output-card">
+                    <h2>Analyse-Bericht</h2>
+                    <div id="analysisReport" class="analysis-report">
+                        <p class="placeholder">Bericht wird nach Analyse angezeigt...</p>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="output-card">
+                    <h2>Statistiken</h2>
+                    <div id="statistics" class="statistics-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Textlänge:</span>
+                            <span class="stat-value" id="statLength">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Großbuchstaben:</span>
+                            <span class="stat-value" id="statUppercase">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Ziffern:</span>
+                            <span class="stat-value" id="statDigits">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Leerzeichen:</span>
+                            <span class="stat-value" id="statSpaces">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Wörter:</span>
+                            <span class="stat-value" id="statWords">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Ø Wortlänge:</span>
+                            <span class="stat-value" id="statAvgWord">0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Characteristics Display -->
+                <div class="output-card">
+                    <h2>Handschrift-Charakteristiken</h2>
+                    <div id="characteristicsDisplay" class="characteristics-display">
+                        <div class="char-item">
+                            <span>Neigungswinkel:</span>
+                            <span id="dispSlant">0°</span>
+                        </div>
+                        <div class="char-item">
+                            <span>Zeilenabstand:</span>
+                            <span id="dispSpacing">1.0</span>
+                        </div>
+                        <div class="char-item">
+                            <span>Buchstabenhöhe:</span>
+                            <span id="dispHeight">1.0</span>
+                        </div>
+                        <div class="char-item">
+                            <span>Buchstabenbreite:</span>
+                            <span id="dispWidth">1.0</span>
+                        </div>
+                        <div class="char-item">
+                            <span>Druckstärke:</span>
+                            <span id="dispPressure">50%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Handwriting Script Analyzer © 2026 | Interaktives Analysewerkzeug für Handschriften</p>
+        </footer>
+    </div>
+
+    <script src="analyzer.js"></script>
+</body>
+</html>
