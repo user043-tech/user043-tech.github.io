@@ -20,6 +20,7 @@
             --text-primary: #f1f5f9;
             --text-secondary: #cbd5e1;
             --border-color: #475569;
+            --success-color: #10b981;
         }
 
         body {
@@ -30,7 +31,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -54,25 +55,33 @@
             font-size: 1.1rem;
         }
 
-        .content {
+        .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-bottom: 40px;
         }
 
-        @media (max-width: 1024px) {
-            .content {
+        @media (max-width: 1200px) {
+            .main-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        .input-section {
+        .panel {
             background: var(--bg-secondary);
             border: 2px solid var(--border-color);
             border-radius: 12px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
         }
 
         .form-group {
@@ -96,11 +105,13 @@
             font-family: 'Monaco', monospace;
             font-size: 1rem;
             resize: vertical;
+            transition: all 0.3s;
         }
 
         textarea:focus {
             outline: none;
             border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .style-buttons {
@@ -118,6 +129,7 @@
             cursor: pointer;
             font-weight: 500;
             transition: all 0.3s;
+            font-size: 0.9rem;
         }
 
         .style-btn:hover {
@@ -129,6 +141,7 @@
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             border-color: var(--primary-color);
             color: white;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
         }
 
         .characteristics-group {
@@ -136,6 +149,12 @@
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 20px;
+        }
+
+        .characteristics-group h3 {
+            font-size: 1rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
         }
 
         .slider-group {
@@ -146,6 +165,7 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
+            font-size: 0.9rem;
         }
 
         .slider {
@@ -164,22 +184,77 @@
             border-radius: 50%;
             background: var(--primary-color);
             cursor: pointer;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
         }
 
-        .btn-primary {
-            width: 100%;
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-primary, .btn-secondary {
             padding: 12px;
             border: none;
             border-radius: 8px;
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
+            grid-column: 1 / -1;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .output-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1200px) {
+            .output-section {
+                grid-template-columns: 1fr;
+            }
         }
 
         .output-card {
@@ -187,13 +262,13 @@
             border: 2px solid var(--border-color);
             border-radius: 12px;
             padding: 25px;
-            margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .output-card h2 {
             color: var(--primary-color);
             margin-bottom: 15px;
+            font-size: 1.2rem;
         }
 
         .converted-text-display {
@@ -209,28 +284,14 @@
             word-break: break-word;
             border: 2px dashed var(--border-color);
             margin-bottom: 15px;
-        }
-
-        .btn-secondary {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--primary-color);
+            text-align: center;
         }
 
         .analysis-report {
             background: var(--bg-tertiary);
             padding: 15px;
             border-radius: 8px;
+            font-size: 0.95rem;
         }
 
         .analysis-report ul {
@@ -242,6 +303,10 @@
             display: flex;
             justify-content: space-between;
             border-bottom: 1px solid var(--border-color);
+        }
+
+        .analysis-report li:last-child {
+            border-bottom: none;
         }
 
         .analysis-report .label {
@@ -266,17 +331,86 @@
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             border-left: 4px solid var(--primary-color);
         }
 
         .stat-label {
             color: var(--text-secondary);
+            font-weight: 500;
         }
 
         .stat-value {
             color: var(--primary-color);
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+        }
+
+        .handwriting-analysis {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .handwriting-analysis h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .analysis-item {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .analysis-item:last-child {
+            border-bottom: none;
+        }
+
+        .analysis-item-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .analysis-item-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .analysis-item-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s;
+        }
+
+        .mimic-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--success-color);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+        }
+
+        .mimic-section h2 {
+            color: var(--success-color);
+            margin-bottom: 15px;
+        }
+
+        .success-badge {
+            display: inline-block;
+            background: var(--success-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
         }
 
         footer {
@@ -291,19 +425,22 @@
 <body>
     <div class="container">
         <header>
-            <h1>✒️ Handwriting Script Analyzer</h1>
-            <p class="subtitle">Analysiert und konvertiert Text in verschiedene Schreibstile</p>
+            <h1>✒️ Handwriting Script Analyzer Pro</h1>
+            <p class="subtitle">Analysiert Ihre eigene Handschrift und ahmt sie nach</p>
         </header>
 
-        <main class="content">
-            <section class="input-section">
+        <div class="main-grid">
+            <!-- LEFT PANEL: Text Converter -->
+            <div class="panel">
+                <div class="panel-title">🔤 Text Konvertieren</div>
+                
                 <div class="form-group">
-                    <label for="textInput">Text eingeben:</label>
-                    <textarea id="textInput" placeholder="Geben Sie hier Ihren Text ein..." rows="5"></textarea>
+                    <label for="textInput">Text zum Konvertieren:</label>
+                    <textarea id="textInput" placeholder="Geben Sie den Text ein, den Sie konvertieren möchten..." rows="5"></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label>Schreibstil wählen:</label>
+                    <label>Schreibstil:</label>
                     <div class="style-buttons">
                         <button class="style-btn active" data-style="print">Normal</button>
                         <button class="style-btn" data-style="cursive">Cursive</button>
@@ -313,88 +450,81 @@
                     </div>
                 </div>
 
-                <div class="characteristics-group">
-                    <h3>Handschrift-Charakteristiken</h3>
-                    
-                    <div class="slider-group">
-                        <label for="slantSlider">Neigungswinkel: <span id="slantValue">0</span>°</label>
-                        <input type="range" id="slantSlider" min="-45" max="45" value="0" class="slider">
-                    </div>
+                <button id="convertBtn" class="btn-primary">🔄 Konvertieren</button>
+            </div>
 
-                    <div class="slider-group">
-                        <label for="spacingSlider">Zeilenabstand: <span id="spacingValue">1.0</span></label>
-                        <input type="range" id="spacingSlider" min="0.5" max="2" step="0.1" value="1" class="slider">
-                    </div>
-
-                    <div class="slider-group">
-                        <label for="heightSlider">Buchstabenhöhe: <span id="heightValue">1.0</span></label>
-                        <input type="range" id="heightSlider" min="0.5" max="2" step="0.1" value="1" class="slider">
-                    </div>
-
-                    <div class="slider-group">
-                        <label for="widthSlider">Buchstabenbreite: <span id="widthValue">1.0</span></label>
-                        <input type="range" id="widthSlider" min="0.5" max="2" step="0.1" value="1" class="slider">
-                    </div>
-
-                    <div class="slider-group">
-                        <label for="pressureSlider">Druckstärke: <span id="pressureValue">50</span>%</label>
-                        <input type="range" id="pressureSlider" min="0" max="100" value="50" class="slider">
-                    </div>
+            <!-- RIGHT PANEL: Custom Handwriting Analysis -->
+            <div class="panel">
+                <div class="panel-title">🖊️ Ihre Handschrift Analysieren</div>
+                
+                <div class="form-group">
+                    <label for="handwritingSample">Geben Sie ein Schriftmuster ein:</label>
+                    <textarea id="handwritingSample" placeholder="Schreiben Sie einen kurzen Text in Ihrer natürlichen Schreibweise. Z.B.: 'Das ist meine Handschrift mit vielen Großbuchstaben und Zahlen 123.'" rows="5"></textarea>
                 </div>
 
-                <button id="analyzeBtn" class="btn-primary">Analysieren & Konvertieren</button>
-            </section>
-
-            <section class="output-section">
-                <div class="output-card">
-                    <h2>Konvertierter Text</h2>
-                    <div id="convertedOutput" class="converted-text-display">
-                        Konvertierter Text wird hier angezeigt...
-                    </div>
-                    <button id="copyBtn" class="btn-secondary">In Zwischenablage kopieren</button>
+                <div class="button-group">
+                    <button id="analyzeHandwritingBtn" class="btn-secondary btn-success">📊 Analysieren</button>
+                    <button id="mimicBtn" class="btn-secondary btn-success">🎯 Nachahmen</button>
                 </div>
+            </div>
+        </div>
 
-                <div class="output-card">
-                    <h2>Analyse-Bericht</h2>
-                    <div id="analysisReport" class="analysis-report">
-                        <p>Bericht wird nach Analyse angezeigt...</p>
-                    </div>
+        <!-- OUTPUT SECTION -->
+        <div class="output-section">
+            <!-- Converted Text Output -->
+            <div class="output-card">
+                <h2>📝 Konvertierter Text</h2>
+                <div id="convertedOutput" class="converted-text-display">
+                    Konvertierter Text wird hier angezeigt...
                 </div>
+                <button id="copyBtn" class="btn-secondary">📋 Kopieren</button>
+            </div>
 
-                <div class="output-card">
-                    <h2>Statistiken</h2>
-                    <div id="statistics" class="statistics-grid">
-                        <div class="stat-item">
-                            <span class="stat-label">Textlänge:</span>
-                            <span class="stat-value" id="statLength">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Großbuchstaben:</span>
-                            <span class="stat-value" id="statUppercase">0%</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Ziffern:</span>
-                            <span class="stat-value" id="statDigits">0%</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Leerzeichen:</span>
-                            <span class="stat-value" id="statSpaces">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Wörter:</span>
-                            <span class="stat-value" id="statWords">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Ø Wortlänge:</span>
-                            <span class="stat-value" id="statAvgWord">0.00</span>
-                        </div>
-                    </div>
+            <!-- Handwriting Analysis Output -->
+            <div class="output-card">
+                <h2>📈 Schriftanalyse</h2>
+                <div id="handwritingAnalysis" class="handwriting-analysis">
+                    <p style="color: var(--text-secondary);">Analysieren Sie ein Schriftmuster um die Ergebnisse zu sehen...</p>
                 </div>
-            </section>
-        </main>
+            </div>
+        </div>
+
+        <!-- Mimic Section -->
+        <div class="output-section" id="mimicSection" style="display: none;">
+            <div class="mimic-section">
+                <div class="success-badge">✓ Nachahmt Ihre Schrift</div>
+                <h2>🎨 Nachgeahmte Schrift</h2>
+                <div id="mimicDisplay" class="converted-text-display"></div>
+                <button id="copyMimicBtn" class="btn-secondary" style="margin-top: 15px;">📋 Kopieren</button>
+            </div>
+
+            <div class="output-card">
+                <h2>📊 Schriftmuster-Vergleich</h2>
+                <div class="analysis-report">
+                    <ul id="mimicComparison">
+                        <li>
+                            <span class="label">Original Länge:</span>
+                            <span class="value" id="origLength">-</span>
+                        </li>
+                        <li>
+                            <span class="label">Wörter:</span>
+                            <span class="value" id="origWords">-</span>
+                        </li>
+                        <li>
+                            <span class="label">Großbuchstaben Ratio:</span>
+                            <span class="value" id="origUpperRatio">-</span>
+                        </li>
+                        <li>
+                            <span class="label">Ziffern Ratio:</span>
+                            <span class="value" id="origDigitRatio">-</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
         <footer>
-            <p>Handwriting Script Analyzer © 2026 | Interaktives Analysewerkzeug für Handschriften</p>
+            <p>Handwriting Script Analyzer Pro © 2026 | Analysieren Sie Ihre Handschrift und lassen Sie sie nachahmen</p>
         </footer>
     </div>
 
@@ -463,21 +593,56 @@
                 const words = text.split(/\s+/).filter(w => w);
                 const upper = (text.match(/[A-Z]/g) || []).length;
                 const digits = (text.match(/[0-9]/g) || []).length;
+                const lower = (text.match(/[a-z]/g) || []).length;
+                const spaces = text.split(' ').length - 1;
                 
                 return {
                     length: text.length,
-                    uppercase: upper,
-                    digits: digits,
-                    spaces: text.split(' ').length - 1,
                     words: words.length,
+                    uppercase: upper,
+                    lowercase: lower,
+                    digits: digits,
+                    spaces: spaces,
+                    upperRatio: text.length ? (upper / text.length * 100) : 0,
+                    lowerRatio: text.length ? (lower / text.length * 100) : 0,
+                    digitRatio: text.length ? (digits / text.length * 100) : 0,
                     avgLength: words.length ? words.reduce((s, w) => s + w.length, 0) / words.length : 0
                 };
+            }
+
+            // Determine the best matching style based on handwriting characteristics
+            determineBestStyle(text) {
+                const analysis = this.analyze(text);
+                
+                // Higher uppercase ratio suggests formal/decorative style
+                if (analysis.upperRatio > 40) {
+                    return 'decorative';
+                }
+                
+                // Many digits and numbers suggest italic style
+                if (analysis.digitRatio > 15) {
+                    return 'italic';
+                }
+                
+                // Balanced mix suggests cursive
+                if (analysis.lowerRatio > 50 && analysis.upperRatio > 20) {
+                    return 'cursive';
+                }
+                
+                // High lowercase ratio suggests fraktur style
+                if (analysis.lowerRatio > 70) {
+                    return 'fraktur';
+                }
+                
+                return 'cursive';
             }
         }
 
         const analyzer = new HandwritingAnalyzer();
         let currentStyle = 'print';
+        let lastAnalyzedHandwriting = null;
 
+        // Style buttons
         document.querySelectorAll('.style-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
@@ -486,7 +651,8 @@
             });
         });
 
-        document.getElementById('analyzeBtn').addEventListener('click', () => {
+        // Convert button
+        document.getElementById('convertBtn').addEventListener('click', () => {
             const text = document.getElementById('textInput').value;
             if (!text) {
                 alert('Bitte geben Sie einen Text ein!');
@@ -494,31 +660,110 @@
             }
 
             const converted = analyzer.convert(text, currentStyle);
-            const analysis = analyzer.analyze(text);
-
             document.getElementById('convertedOutput').textContent = converted;
-            document.getElementById('statLength').textContent = analysis.length;
-            document.getElementById('statUppercase').textContent = ((analysis.uppercase / text.length * 100) || 0).toFixed(1) + '%';
-            document.getElementById('statDigits').textContent = ((analysis.digits / text.length * 100) || 0).toFixed(1) + '%';
-            document.getElementById('statSpaces').textContent = analysis.spaces;
-            document.getElementById('statWords').textContent = analysis.words;
-            document.getElementById('statAvgWord').textContent = analysis.avgLength.toFixed(2);
-
-            document.getElementById('analysisReport').innerHTML = `
-                <ul>
-                    <li><span class="label">Originaltext:</span><span class="value">${text}</span></li>
-                    <li><span class="label">Textlänge:</span><span class="value">${analysis.length} Zeichen</span></li>
-                    <li><span class="label">Großbuchstaben:</span><span class="value">${((analysis.uppercase / text.length * 100) || 0).toFixed(1)}%</span></li>
-                    <li><span class="label">Ziffern:</span><span class="value">${((analysis.digits / text.length * 100) || 0).toFixed(1)}%</span></li>
-                    <li><span class="label">Wörter:</span><span class="value">${analysis.words}</span></li>
-                    <li><span class="label">Ø Wortlänge:</span><span class="value">${analysis.avgLength.toFixed(2)}</span></li>
-                </ul>
-            `;
         });
 
+        // Copy button
         document.getElementById('copyBtn').addEventListener('click', () => {
             const text = document.getElementById('convertedOutput').textContent;
-            navigator.clipboard.writeText(text).then(() => alert('Kopiert!'));
+            if (text === 'Konvertierter Text wird hier angezeigt...') {
+                alert('Bitte konvertieren Sie zunächst einen Text!');
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✓ Text kopiert!');
+            });
+        });
+
+        // Analyze Handwriting button
+        document.getElementById('analyzeHandwritingBtn').addEventListener('click', () => {
+            const text = document.getElementById('handwritingSample').value;
+            if (!text) {
+                alert('Bitte geben Sie ein Schriftmuster ein!');
+                return;
+            }
+
+            lastAnalyzedHandwriting = text;
+            const analysis = analyzer.analyze(text);
+
+            const html = `
+                <h3>📊 Schriftmuster-Analyse</h3>
+                <div class="analysis-item">
+                    <div class="analysis-item-label">Textlänge: <strong>${analysis.length}</strong> Zeichen</div>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-label">Wörter: <strong>${analysis.words}</strong></div>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-label">Großbuchstaben: ${analysis.upperRatio.toFixed(1)}%</div>
+                    <div class="analysis-item-bar">
+                        <div class="analysis-item-fill" style="width: ${Math.min(100, analysis.upperRatio * 2)}%"></div>
+                    </div>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-label">Kleinbuchstaben: ${analysis.lowerRatio.toFixed(1)}%</div>
+                    <div class="analysis-item-bar">
+                        <div class="analysis-item-fill" style="width: ${Math.min(100, analysis.lowerRatio)}%"></div>
+                    </div>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-label">Ziffern: ${analysis.digitRatio.toFixed(1)}%</div>
+                    <div class="analysis-item-bar">
+                        <div class="analysis-item-fill" style="width: ${Math.min(100, analysis.digitRatio * 5)}%"></div>
+                    </div>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-label">Durchschn. Wortlänge: <strong>${analysis.avgLength.toFixed(2)}</strong> Zeichen</div>
+                </div>
+            `;
+
+            document.getElementById('handwritingAnalysis').innerHTML = html;
+        });
+
+        // Mimic button
+        document.getElementById('mimicBtn').addEventListener('click', () => {
+            const handwritingSample = document.getElementById('handwritingSample').value;
+            const textToMimic = document.getElementById('textInput').value;
+
+            if (!handwritingSample) {
+                alert('Bitte analysieren Sie zunächst ein Schriftmuster!');
+                return;
+            }
+
+            if (!textToMimic) {
+                alert('Bitte geben Sie einen Text ein, den Sie nachahmen möchten!');
+                return;
+            }
+
+            // Determine best style from handwriting analysis
+            const bestStyle = analyzer.determineBestStyle(handwritingSample);
+            
+            // Convert the text using the determined style
+            const mimicked = analyzer.convert(textToMimic, bestStyle);
+            
+            // Get analysis data
+            const analysis = analyzer.analyze(handwritingSample);
+
+            // Update mimic display
+            document.getElementById('mimicDisplay').textContent = mimicked;
+            
+            // Update comparison
+            document.getElementById('origLength').textContent = `${analysis.length} Zeichen`;
+            document.getElementById('origWords').textContent = `${analysis.words} Wörter`;
+            document.getElementById('origUpperRatio').textContent = `${analysis.upperRatio.toFixed(1)}%`;
+            document.getElementById('origDigitRatio').textContent = `${analysis.digitRatio.toFixed(1)}%`;
+
+            // Show mimic section
+            document.getElementById('mimicSection').style.display = 'grid';
+            document.getElementById('mimicSection').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Copy Mimic button
+        document.getElementById('copyMimicBtn').addEventListener('click', () => {
+            const text = document.getElementById('mimicDisplay').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✓ Nachgeahmter Text kopiert!');
+            });
         });
     </script>
 </body>
