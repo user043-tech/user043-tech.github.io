@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwriting Script Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: #475569;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Monaco', monospace;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .style-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .style-btn {
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .style-btn:hover {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .style-btn.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .characteristics-group {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .slider-group {
+            margin-bottom: 15px;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .output-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .output-card h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .converted-text-display {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 8px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            word-break: break-word;
+            border: 2px dashed var(--border-color);
+            margin-bottom: 15px;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
+        }
+
+        .analysis-report {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .analysis-report ul {
+            list-style: none;
+        }
+
+        .analysis-report li {
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .analysis-report .label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .analysis-report .value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .statistics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✒️ Handwriting Script Analyzer</h1>
+            <p class="subtitle">Analysiert und konvertiert Text in verschiedene Schreibstile</p>
+        </header>
+
+        <main class="content">
+            <section class="input-section">
+                <div class="form-group">
+                    <label for="textInput">Text eingeben:</label>
+                    <textarea id="textInput" placeholder="Geben Sie hier Ihren Text ein..." rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Schreibstil wählen:</label>
+                    <div class="style-buttons">
+                        <button class="style-btn active" data-style="print">Normal</button>
+                        <button class="style-btn" data-style="cursive">Cursive</button>
+                        <button class="style-btn" data-style="italic">Italic</button>
+                        <button class="style-btn" data-style="decorative">Dekorativ</button>
+                        <button class="style-btn" data-style="fraktur">Fraktur</button>
+                    </div>
+                </div>
+
+                <div class="characteristics-group">
+                    <h3>Handschrift-Charakteristiken</h3>
+                    
+                    <div class="slider-group">
+                        <label for="slantSlider">Neigungswinkel: <span id="slantValue">0</span>°</label>
+                        <input type="range" id="slantSlider" min="-45" max="45" value="0" class="slider">
+                    </div>
+
+                    <div class="slider-group">
+                        <label for="spacingSlider">Zeilenabstand: <span id="spacingValue">1.0</span></label>
+                        <input type="range" id="spacingSlider" min="0.5" max="2" step="0.1" value="1" class="slider">
+                    </div>
+
+                    <div class="slider-group">
+                        <label for="heightSlider">Buchstabenhöhe: <span id="heightValue">1.0</span></label>
+                        <input type="range" id="heightSlider" min="0.5" max="2" step="0.1" value="1" class="slider">
+                    </div>
+
+                    <div class="slider-group">
+                        <label for="widthSlider">Buchstabenbreite: <span id="widthValue">1.0</span></label>
+                        <input type="range" id="widthSlider" min="0.5" max="2" step="0.1" value="1" class="slider">
+                    </div>
+
+                    <div class="slider-group">
+                        <label for="pressureSlider">Druckstärke: <span id="pressureValue">50</span>%</label>
+                        <input type="range" id="pressureSlider" min="0" max="100" value="50" class="slider">
+                    </div>
+                </div>
+
+                <button id="analyzeBtn" class="btn-primary">Analysieren & Konvertieren</button>
+            </section>
+
+            <section class="output-section">
+                <div class="output-card">
+                    <h2>Konvertierter Text</h2>
+                    <div id="convertedOutput" class="converted-text-display">
+                        Konvertierter Text wird hier angezeigt...
+                    </div>
+                    <button id="copyBtn" class="btn-secondary">In Zwischenablage kopieren</button>
+                </div>
+
+                <div class="output-card">
+                    <h2>Analyse-Bericht</h2>
+                    <div id="analysisReport" class="analysis-report">
+                        <p>Bericht wird nach Analyse angezeigt...</p>
+                    </div>
+                </div>
+
+                <div class="output-card">
+                    <h2>Statistiken</h2>
+                    <div id="statistics" class="statistics-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Textlänge:</span>
+                            <span class="stat-value" id="statLength">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Großbuchstaben:</span>
+                            <span class="stat-value" id="statUppercase">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Ziffern:</span>
+                            <span class="stat-value" id="statDigits">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Leerzeichen:</span>
+                            <span class="stat-value" id="statSpaces">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Wörter:</span>
+                            <span class="stat-value" id="statWords">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Ø Wortlänge:</span>
+                            <span class="stat-value" id="statAvgWord">0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Handwriting Script Analyzer © 2026 | Interaktives Analysewerkzeug für Handschriften</p>
+        </footer>
+    </div>
+
+    <script>
+        class HandwritingAnalyzer {
+            constructor() {
+                this.styleMaps = {
+                    cursive: {
+                        'a': '𝒂', 'b': '𝒃', 'c': '𝒄', 'd': '𝒅', 'e': '𝒆', 'f': '𝒇',
+                        'g': '𝒈', 'h': '𝒉', 'i': '𝒊', 'j': '𝒋', 'k': '𝒌', 'l': '𝒍',
+                        'm': '𝒎', 'n': '𝒏', 'o': '𝒐', 'p': '𝒑', 'q': '𝒒', 'r': '𝒓',
+                        's': '𝒔', 't': '𝒕', 'u': '𝒖', 'v': '𝒗', 'w': '𝒘', 'x': '𝒙',
+                        'y': '𝒚', 'z': '𝒛',
+                        'A': '𝑨', 'B': '𝑩', 'C': '𝑪', 'D': '𝑫', 'E': '𝑬', 'F': '𝑭',
+                        'G': '𝑮', 'H': '𝑯', 'I': '𝑰', 'J': '𝑱', 'K': '𝑲', 'L': '𝑳',
+                        'M': '𝑴', 'N': '𝑵', 'O': '𝑶', 'P': '𝑷', 'Q': '𝑸', 'R': '𝑹',
+                        'S': '𝑺', 'T': '𝑻', 'U': '𝑼', 'V': '𝑽', 'W': '𝑾', 'X': '𝑿',
+                        'Y': '𝒀', 'Z': '𝒁',
+                    },
+                    decorative: {
+                        'a': '𝓪', 'b': '𝓫', 'c': '𝓬', 'd': '𝓭', 'e': '𝓮', 'f': '𝓯',
+                        'g': '𝓰', 'h': '𝓱', 'i': '𝓲', 'j': '𝓳', 'k': '𝓴', 'l': '𝓵',
+                        'm': '𝓶', 'n': '𝓷', 'o': '𝓸', 'p': '𝓹', 'q': '𝓺', 'r': '𝓻',
+                        's': '𝓼', 't': '𝓽', 'u': '𝓾', 'v': '𝓿', 'w': '𝔀', 'x': '𝔁',
+                        'y': '𝔂', 'z': '𝔃',
+                        'A': '𝓐', 'B': '𝓑', 'C': '𝓒', 'D': '𝓓', 'E': '𝓔', 'F': '𝓕',
+                        'G': '𝓖', 'H': '𝓗', 'I': '𝓘', 'J': '𝓙', 'K': '𝓚', 'L': '𝓛',
+                        'M': '𝓜', 'N': '𝓝', 'O': '𝓞', 'P': '𝓟', 'Q': '𝓠', 'R': '𝓡',
+                        'S': '𝓢', 'T': '𝓣', 'U': '𝓤', 'V': '𝓥', 'W': '𝓦', 'X': '𝓧',
+                        'Y': '𝓨', 'Z': '𝓩',
+                    },
+                    italic: {
+                        'a': '𝘢', 'b': '𝘣', 'c': '𝘤', 'd': '𝘥', 'e': '𝘦', 'f': '𝘧',
+                        'g': '𝘨', 'h': '𝘩', 'i': '𝘪', 'j': '𝘫', 'k': '𝘬', 'l': '𝘭',
+                        'm': '𝘮', 'n': '𝘯', 'o': '𝘰', 'p': '𝘱', 'q': '𝘲', 'r': '𝘳',
+                        's': '𝘴', 't': '𝘵', 'u': '𝘶', 'v': '𝘷', 'w': '𝘸', 'x': '𝘹',
+                        'y': '𝘺', 'z': '𝘻',
+                        'A': '𝘈', 'B': '𝘉', 'C': '𝘊', 'D': '𝘋', 'E': '𝘌', 'F': '𝘍',
+                        'G': '𝘎', 'H': '𝘏', 'I': '𝘐', 'J': '𝘑', 'K': '𝘒', 'L': '𝘓',
+                        'M': '𝘔', 'N': '𝘕', 'O': '𝘖', 'P': '𝘗', 'Q': '𝘘', 'R': '𝘙',
+                        'S': '𝘚', 'T': '𝘛', 'U': '𝘜', 'V': '𝘝', 'W': '𝘞', 'X': '𝘟',
+                        'Y': '𝘠', 'Z': '𝘡',
+                    },
+                    fraktur: {
+                        'a': '𝔞', 'b': '𝔟', 'c': '𝔠', 'd': '𝔡', 'e': '𝔢', 'f': '𝔣',
+                        'g': '𝔤', 'h': '𝔥', 'i': '𝔦', 'j': '𝔧', 'k': '𝔨', 'l': '𝔩',
+                        'm': '𝔪', 'n': '𝔫', 'o': '𝔬', 'p': '𝔭', 'q': '𝔮', 'r': '𝔯',
+                        's': '𝔰', 't': '𝔱', 'u': '𝔲', 'v': '𝔳', 'w': '𝔴', 'x': '𝔵',
+                        'y': '𝔶', 'z': '𝔷',
+                        'A': '𝔄', 'B': '𝔅', 'C': '𝔆', 'D': '𝔇', 'E': '𝔈', 'F': '𝔉',
+                        'G': '𝔊', 'H': '𝔋', 'I': '𝔍', 'J': '𝔎', 'K': '𝔏', 'L': '𝔐',
+                        'M': '𝔑', 'N': '𝔒', 'O': '𝔓', 'P': '𝔔', 'Q': '𝔕', 'R': '𝔖',
+                        'S': '𝔗', 'T': '𝔘', 'U': '𝔙', 'V': '𝔚', 'W': '𝔛', 'X': '𝔜',
+                        'Y': '𝔝', 'Z': '𝔞',
+                    },
+                    print: {}
+                };
+            }
+
+            convert(text, style) {
+                const map = this.styleMaps[style] || {};
+                return text.split('').map(c => map[c] || c).join('');
+            }
+
+            analyze(text) {
+                const words = text.split(/\s+/).filter(w => w);
+                const upper = (text.match(/[A-Z]/g) || []).length;
+                const digits = (text.match(/[0-9]/g) || []).length;
+                
+                return {
+                    length: text.length,
+                    uppercase: upper,
+                    digits: digits,
+                    spaces: text.split(' ').length - 1,
+                    words: words.length,
+                    avgLength: words.length ? words.reduce((s, w) => s + w.length, 0) / words.length : 0
+                };
+            }
+        }
+
+        const analyzer = new HandwritingAnalyzer();
+        let currentStyle = 'print';
+
+        document.querySelectorAll('.style-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentStyle = e.target.dataset.style;
+            });
+        });
+
+        document.getElementById('analyzeBtn').addEventListener('click', () => {
+            const text = document.getElementById('textInput').value;
+            if (!text) {
+                alert('Bitte geben Sie einen Text ein!');
+                return;
+            }
+
+            const converted = analyzer.convert(text, currentStyle);
+            const analysis = analyzer.analyze(text);
+
+            document.getElementById('convertedOutput').textContent = converted;
+            document.getElementById('statLength').textContent = analysis.length;
+            document.getElementById('statUppercase').textContent = ((analysis.uppercase / text.length * 100) || 0).toFixed(1) + '%';
+            document.getElementById('statDigits').textContent = ((analysis.digits / text.length * 100) || 0).toFixed(1) + '%';
+            document.getElementById('statSpaces').textContent = analysis.spaces;
+            document.getElementById('statWords').textContent = analysis.words;
+            document.getElementById('statAvgWord').textContent = analysis.avgLength.toFixed(2);
+
+            document.getElementById('analysisReport').innerHTML = `
+                <ul>
+                    <li><span class="label">Originaltext:</span><span class="value">${text}</span></li>
+                    <li><span class="label">Textlänge:</span><span class="value">${analysis.length} Zeichen</span></li>
+                    <li><span class="label">Großbuchstaben:</span><span class="value">${((analysis.uppercase / text.length * 100) || 0).toFixed(1)}%</span></li>
+                    <li><span class="label">Ziffern:</span><span class="value">${((analysis.digits / text.length * 100) || 0).toFixed(1)}%</span></li>
+                    <li><span class="label">Wörter:</span><span class="value">${analysis.words}</span></li>
+                    <li><span class="label">Ø Wortlänge:</span><span class="value">${analysis.avgLength.toFixed(2)}</span></li>
+                </ul>
+            `;
+        });
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const text = document.getElementById('convertedOutput').textContent;
+            navigator.clipboard.writeText(text).then(() => alert('Kopiert!'));
+        });
+    </script>
+</body>
+</html>
