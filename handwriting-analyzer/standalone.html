@@ -114,26 +114,24 @@
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
-        .canvas-container {
-            background: white;
-            border: 2px solid var(--border-color);
+        .canvas-wrapper {
+            border: 3px solid var(--primary-color);
             border-radius: 8px;
+            background: white;
             padding: 0;
-            overflow: hidden;
             margin-bottom: 15px;
+            overflow: hidden;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        #canvas {
+        #drawingCanvas {
             display: block;
             cursor: crosshair;
             touch-action: none;
-        }
-
-        .canvas-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
+            background: white;
         }
 
         .style-buttons {
@@ -343,8 +341,8 @@
         }
 
         .brush-preview {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             background: var(--bg-tertiary);
             border-radius: 50%;
             border: 2px solid var(--border-color);
@@ -403,9 +401,9 @@
                 <div class="panel-title">🖌️ Ihre Handschrift Zeichnen</div>
                 
                 <div class="form-group">
-                    <label>Zeichenpapier (malen Sie mit der Maus oder dem Finger):</label>
-                    <div class="canvas-container">
-                        <canvas id="canvas" width="100%" height="250"></canvas>
+                    <label>📄 Zeichenpapier (malen Sie mit der Maus oder dem Finger):</label>
+                    <div class="canvas-wrapper">
+                        <canvas id="drawingCanvas" width="400" height="250"></canvas>
                     </div>
                 </div>
 
@@ -419,7 +417,7 @@
                     </div>
                 </div>
 
-                <div class="canvas-controls">
+                <div class="button-group">
                     <button id="clearCanvasBtn" class="btn-secondary btn-danger">🗑️ Löschen</button>
                     <button id="analyzeDrawingBtn" class="btn-secondary btn-success">📊 Analysieren</button>
                 </div>
@@ -447,7 +445,7 @@
         </div>
 
         <!-- Mimic Section -->
-        <div class="output-section" id="mimicSection" style="display: none;">
+        <div class="output-section" id="mimicSection" style="display: none; margin-top: 30px;">
             <div class="mimic-section">
                 <div class="success-badge">✓ Nachgeahmte Schrift</div>
                 <h2>🎨 Mit Ihrer Schrift konvertiert</h2>
@@ -457,7 +455,7 @@
 
             <div class="output-card">
                 <h2>📊 Erkannte Schriftmerkmale</h2>
-                <div id="mimicComparison" class="analysis-report"></div>
+                <div id="mimicComparison" class="handwriting-analysis"></div>
             </div>
         </div>
 
@@ -468,21 +466,16 @@
 
     <script>
         // Canvas Setup
-        const canvas = document.getElementById('canvas');
+        const canvas = document.getElementById('drawingCanvas');
         const ctx = canvas.getContext('2d');
         const brushSizeInput = document.getElementById('brushSize');
         const brushPreview = document.getElementById('brushPreview');
 
-        // Set canvas size
-        function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = 250;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        // Ensure canvas has proper dimensions
+        canvas.width = 400;
+        canvas.height = 250;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
 
         // Brush size preview
         brushSizeInput.addEventListener('input', (e) => {
@@ -493,6 +486,7 @@
 
         // Drawing
         let isDrawing = false;
+
         canvas.addEventListener('mousedown', (e) => {
             isDrawing = true;
             const rect = canvas.getBoundingClientRect();
@@ -564,7 +558,7 @@
                         'y': '𝔂', 'z': '𝔃',
                         'A': '𝓐', 'B': '𝓑', 'C': '𝓒', 'D': '𝓓', 'E': '𝓔', 'F': '𝓕',
                         'G': '𝓖', 'H': '𝓗', 'I': '𝓘', 'J': '𝓙', 'K': '𝓚', 'L': '𝓛',
-                        'M': '��', 'N': '𝓝', 'O': '𝓞', 'P': '𝓟', 'Q': '𝓠', 'R': '𝓡',
+                        'M': '𝓜', 'N': '𝓝', 'O': '𝓞', 'P': '𝓟', 'Q': '𝓠', 'R': '𝓡',
                         'S': '𝓢', 'T': '𝓣', 'U': '𝓤', 'V': '𝓥', 'W': '𝓦', 'X': '𝓧',
                         'Y': '𝓨', 'Z': '𝓩',
                     },
@@ -715,23 +709,7 @@
             document.getElementById('handwritingAnalysis').innerHTML = html;
         });
 
-        // Mimic with drawing
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && e.ctrlKey && lastDrawingAnalysis) {
-                const text = document.getElementById('textInput').value;
-                if (!text) {
-                    alert('Bitte geben Sie einen Text ein!');
-                    return;
-                }
-
-                const mimicked = analyzer.convert(text, lastDrawingAnalysis.style);
-                document.getElementById('mimicDisplay').textContent = mimicked;
-                document.getElementById('mimicSection').style.display = 'grid';
-                document.getElementById('mimicSection').scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-
-        // Mimic button (Ctrl+Enter or click)
+        // Mimic with drawing (Doppelklick auf Canvas)
         canvas.addEventListener('dblclick', () => {
             if (!lastDrawingAnalysis) {
                 alert('Bitte analysieren Sie zuerst Ihre Zeichnung!');
@@ -746,6 +724,26 @@
 
             const mimicked = analyzer.convert(text, lastDrawingAnalysis.style);
             document.getElementById('mimicDisplay').textContent = mimicked;
+            
+            const html = `
+                <div class="analysis-item">
+                    <div class="analysis-item-label">Schriftstil: <strong>${lastDrawingAnalysis.style.toUpperCase()}</strong></div>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-label">Zeichnungsdichte: ${lastDrawingAnalysis.density.toFixed(2)}%</div>
+                    <div class="analysis-item-bar">
+                        <div class="analysis-item-fill" style="width: ${Math.min(100, lastDrawingAnalysis.density * 5)}%"></div>
+                    </div>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-label">Druckintensität: ${lastDrawingAnalysis.pressure.toFixed(1)}%</div>
+                    <div class="analysis-item-bar">
+                        <div class="analysis-item-fill" style="width: ${lastDrawingAnalysis.pressure}%"></div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('mimicComparison').innerHTML = html;
+            
             document.getElementById('mimicSection').style.display = 'grid';
             document.getElementById('mimicSection').scrollIntoView({ behavior: 'smooth' });
         });
