@@ -114,6 +114,28 @@
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
+        .canvas-container {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        #canvas {
+            display: block;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .canvas-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
         .style-buttons {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -142,59 +164,6 @@
             border-color: var(--primary-color);
             color: white;
             box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-        }
-
-        .characteristics-group {
-            background: var(--bg-tertiary);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .characteristics-group h3 {
-            font-size: 1rem;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .slider-group {
-            margin-bottom: 15px;
-        }
-
-        .slider-group label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        .slider {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
-        }
-
-        .slider::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
         }
 
         .button-group {
@@ -245,6 +214,15 @@
             box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
         }
 
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
         .output-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -285,65 +263,6 @@
             border: 2px dashed var(--border-color);
             margin-bottom: 15px;
             text-align: center;
-        }
-
-        .analysis-report {
-            background: var(--bg-tertiary);
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-        }
-
-        .analysis-report ul {
-            list-style: none;
-        }
-
-        .analysis-report li {
-            padding: 8px 0;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .analysis-report li:last-child {
-            border-bottom: none;
-        }
-
-        .analysis-report .label {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .analysis-report .value {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .statistics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .stat-item {
-            background: var(--bg-tertiary);
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .stat-value {
-            color: var(--primary-color);
-            font-weight: 700;
-            font-size: 1.1rem;
         }
 
         .handwriting-analysis {
@@ -413,6 +332,32 @@
             margin-bottom: 15px;
         }
 
+        .brush-size {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brush-size input {
+            flex: 1;
+        }
+
+        .brush-preview {
+            width: 30px;
+            height: 30px;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brush-dot {
+            background: var(--primary-color);
+            border-radius: 50%;
+        }
+
         footer {
             text-align: center;
             padding: 30px;
@@ -426,7 +371,7 @@
     <div class="container">
         <header>
             <h1>✒️ Handwriting Script Analyzer Pro</h1>
-            <p class="subtitle">Analysiert Ihre eigene Handschrift und ahmt sie nach</p>
+            <p class="subtitle">Malen Sie Ihre Handschrift und lassen Sie sie nachahmen</p>
         </header>
 
         <div class="main-grid">
@@ -453,18 +398,30 @@
                 <button id="convertBtn" class="btn-primary">🔄 Konvertieren</button>
             </div>
 
-            <!-- RIGHT PANEL: Custom Handwriting Analysis -->
+            <!-- RIGHT PANEL: Handwriting Canvas -->
             <div class="panel">
-                <div class="panel-title">🖊️ Ihre Handschrift Analysieren</div>
+                <div class="panel-title">🖌️ Ihre Handschrift Zeichnen</div>
                 
                 <div class="form-group">
-                    <label for="handwritingSample">Geben Sie ein Schriftmuster ein:</label>
-                    <textarea id="handwritingSample" placeholder="Schreiben Sie einen kurzen Text in Ihrer natürlichen Schreibweise. Z.B.: 'Das ist meine Handschrift mit vielen Großbuchstaben und Zahlen 123.'" rows="5"></textarea>
+                    <label>Zeichenpapier (malen Sie mit der Maus oder dem Finger):</label>
+                    <div class="canvas-container">
+                        <canvas id="canvas" width="100%" height="250"></canvas>
+                    </div>
                 </div>
 
-                <div class="button-group">
-                    <button id="analyzeHandwritingBtn" class="btn-secondary btn-success">📊 Analysieren</button>
-                    <button id="mimicBtn" class="btn-secondary btn-success">🎯 Nachahmen</button>
+                <div class="form-group">
+                    <label>Pinselgröße:</label>
+                    <div class="brush-size">
+                        <input type="range" id="brushSize" min="2" max="20" value="3" class="slider">
+                        <div class="brush-preview">
+                            <div class="brush-dot" id="brushPreview" style="width: 3px; height: 3px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="canvas-controls">
+                    <button id="clearCanvasBtn" class="btn-secondary btn-danger">🗑️ Löschen</button>
+                    <button id="analyzeDrawingBtn" class="btn-secondary btn-success">📊 Analysieren</button>
                 </div>
             </div>
         </div>
@@ -484,7 +441,7 @@
             <div class="output-card">
                 <h2>📈 Schriftanalyse</h2>
                 <div id="handwritingAnalysis" class="handwriting-analysis">
-                    <p style="color: var(--text-secondary);">Analysieren Sie ein Schriftmuster um die Ergebnisse zu sehen...</p>
+                    <p style="color: var(--text-secondary);">Zeichnen Sie etwas auf das Papier und klicken Sie "Analysieren"...</p>
                 </div>
             </div>
         </div>
@@ -492,43 +449,98 @@
         <!-- Mimic Section -->
         <div class="output-section" id="mimicSection" style="display: none;">
             <div class="mimic-section">
-                <div class="success-badge">✓ Nachahmt Ihre Schrift</div>
-                <h2>🎨 Nachgeahmte Schrift</h2>
+                <div class="success-badge">✓ Nachgeahmte Schrift</div>
+                <h2>🎨 Mit Ihrer Schrift konvertiert</h2>
                 <div id="mimicDisplay" class="converted-text-display"></div>
                 <button id="copyMimicBtn" class="btn-secondary" style="margin-top: 15px;">📋 Kopieren</button>
             </div>
 
             <div class="output-card">
-                <h2>📊 Schriftmuster-Vergleich</h2>
-                <div class="analysis-report">
-                    <ul id="mimicComparison">
-                        <li>
-                            <span class="label">Original Länge:</span>
-                            <span class="value" id="origLength">-</span>
-                        </li>
-                        <li>
-                            <span class="label">Wörter:</span>
-                            <span class="value" id="origWords">-</span>
-                        </li>
-                        <li>
-                            <span class="label">Großbuchstaben Ratio:</span>
-                            <span class="value" id="origUpperRatio">-</span>
-                        </li>
-                        <li>
-                            <span class="label">Ziffern Ratio:</span>
-                            <span class="value" id="origDigitRatio">-</span>
-                        </li>
-                    </ul>
-                </div>
+                <h2>📊 Erkannte Schriftmerkmale</h2>
+                <div id="mimicComparison" class="analysis-report"></div>
             </div>
         </div>
 
         <footer>
-            <p>Handwriting Script Analyzer Pro © 2026 | Analysieren Sie Ihre Handschrift und lassen Sie sie nachahmen</p>
+            <p>Handwriting Script Analyzer Pro © 2026 | Zeichnen Sie Ihre Handschrift und lassen Sie sie nachahmen</p>
         </footer>
     </div>
 
     <script>
+        // Canvas Setup
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const brushSizeInput = document.getElementById('brushSize');
+        const brushPreview = document.getElementById('brushPreview');
+
+        // Set canvas size
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = 250;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Brush size preview
+        brushSizeInput.addEventListener('input', (e) => {
+            const size = parseInt(e.target.value);
+            brushPreview.style.width = size + 'px';
+            brushPreview.style.height = size + 'px';
+        });
+
+        // Drawing
+        let isDrawing = false;
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineWidth = brushSizeInput.value;
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+        });
+
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseleave', () => isDrawing = false);
+
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            ctx.beginPath();
+            ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            ctx.lineWidth = brushSizeInput.value;
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+            ctx.stroke();
+        });
+
+        canvas.addEventListener('touchend', () => isDrawing = false);
+
+        // Clear canvas
+        document.getElementById('clearCanvasBtn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.getElementById('handwritingAnalysis').innerHTML = '<p style="color: var(--text-secondary);">Zeichenpapier gelöscht. Zeichnen Sie etwas Neues!</p>';
+        });
+
+        // Handwriting Analyzer
         class HandwritingAnalyzer {
             constructor() {
                 this.styleMaps = {
@@ -552,7 +564,7 @@
                         'y': '𝔂', 'z': '𝔃',
                         'A': '𝓐', 'B': '𝓑', 'C': '𝓒', 'D': '𝓓', 'E': '𝓔', 'F': '𝓕',
                         'G': '𝓖', 'H': '𝓗', 'I': '𝓘', 'J': '𝓙', 'K': '𝓚', 'L': '𝓛',
-                        'M': '𝓜', 'N': '𝓝', 'O': '𝓞', 'P': '𝓟', 'Q': '𝓠', 'R': '𝓡',
+                        'M': '��', 'N': '𝓝', 'O': '𝓞', 'P': '𝓟', 'Q': '𝓠', 'R': '𝓡',
                         'S': '𝓢', 'T': '𝓣', 'U': '𝓤', 'V': '𝓥', 'W': '𝓦', 'X': '𝓧',
                         'Y': '𝓨', 'Z': '𝓩',
                     },
@@ -589,58 +601,47 @@
                 return text.split('').map(c => map[c] || c).join('');
             }
 
-            analyze(text) {
-                const words = text.split(/\s+/).filter(w => w);
-                const upper = (text.match(/[A-Z]/g) || []).length;
-                const digits = (text.match(/[0-9]/g) || []).length;
-                const lower = (text.match(/[a-z]/g) || []).length;
-                const spaces = text.split(' ').length - 1;
-                
-                return {
-                    length: text.length,
-                    words: words.length,
-                    uppercase: upper,
-                    lowercase: lower,
-                    digits: digits,
-                    spaces: spaces,
-                    upperRatio: text.length ? (upper / text.length * 100) : 0,
-                    lowerRatio: text.length ? (lower / text.length * 100) : 0,
-                    digitRatio: text.length ? (digits / text.length * 100) : 0,
-                    avgLength: words.length ? words.reduce((s, w) => s + w.length, 0) / words.length : 0
-                };
-            }
+            analyzeDrawing(canvas) {
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                let pixelCount = 0;
 
-            // Determine the best matching style based on handwriting characteristics
-            determineBestStyle(text) {
-                const analysis = this.analyze(text);
-                
-                // Higher uppercase ratio suggests formal/decorative style
-                if (analysis.upperRatio > 40) {
-                    return 'decorative';
+                for (let i = 0; i < data.length; i += 4) {
+                    const alpha = data[i + 3];
+                    if (alpha > 128) {
+                        pixelCount++;
+                    }
                 }
-                
-                // Many digits and numbers suggest italic style
-                if (analysis.digitRatio > 15) {
-                    return 'italic';
+
+                const totalPixels = canvas.width * canvas.height;
+                const drawingDensity = (pixelCount / totalPixels) * 100;
+
+                // Analyze drawing characteristics
+                let pressure = Math.min(100, drawingDensity * 10);
+                let style = 'cursive';
+
+                if (drawingDensity < 2) {
+                    style = 'fraktur';
+                } else if (drawingDensity < 5) {
+                    style = 'italic';
+                } else if (drawingDensity < 10) {
+                    style = 'decorative';
+                } else {
+                    style = 'cursive';
                 }
-                
-                // Balanced mix suggests cursive
-                if (analysis.lowerRatio > 50 && analysis.upperRatio > 20) {
-                    return 'cursive';
-                }
-                
-                // High lowercase ratio suggests fraktur style
-                if (analysis.lowerRatio > 70) {
-                    return 'fraktur';
-                }
-                
-                return 'cursive';
+
+                return {
+                    density: drawingDensity,
+                    pressure: pressure,
+                    style: style,
+                    pixelCount: pixelCount
+                };
             }
         }
 
         const analyzer = new HandwritingAnalyzer();
         let currentStyle = 'print';
-        let lastAnalyzedHandwriting = null;
+        let lastDrawingAnalysis = null;
 
         // Style buttons
         document.querySelectorAll('.style-btn').forEach(btn => {
@@ -675,85 +676,76 @@
             });
         });
 
-        // Analyze Handwriting button
-        document.getElementById('analyzeHandwritingBtn').addEventListener('click', () => {
-            const text = document.getElementById('handwritingSample').value;
-            if (!text) {
-                alert('Bitte geben Sie ein Schriftmuster ein!');
+        // Analyze Drawing
+        document.getElementById('analyzeDrawingBtn').addEventListener('click', () => {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            let pixelCount = 0;
+
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i + 3] > 128) pixelCount++;
+            }
+
+            if (pixelCount === 0) {
+                alert('Bitte zeichnen Sie etwas auf das Papier!');
                 return;
             }
 
-            lastAnalyzedHandwriting = text;
-            const analysis = analyzer.analyze(text);
+            lastDrawingAnalysis = analyzer.analyzeDrawing(canvas);
 
             const html = `
-                <h3>📊 Schriftmuster-Analyse</h3>
+                <h3>📊 Schriftanalyse</h3>
                 <div class="analysis-item">
-                    <div class="analysis-item-label">Textlänge: <strong>${analysis.length}</strong> Zeichen</div>
-                </div>
-                <div class="analysis-item">
-                    <div class="analysis-item-label">Wörter: <strong>${analysis.words}</strong></div>
-                </div>
-                <div class="analysis-item">
-                    <div class="analysis-item-label">Großbuchstaben: ${analysis.upperRatio.toFixed(1)}%</div>
+                    <div class="analysis-item-label">Zeichnungsdichte: ${lastDrawingAnalysis.density.toFixed(2)}%</div>
                     <div class="analysis-item-bar">
-                        <div class="analysis-item-fill" style="width: ${Math.min(100, analysis.upperRatio * 2)}%"></div>
+                        <div class="analysis-item-fill" style="width: ${Math.min(100, lastDrawingAnalysis.density * 5)}%"></div>
                     </div>
                 </div>
                 <div class="analysis-item">
-                    <div class="analysis-item-label">Kleinbuchstaben: ${analysis.lowerRatio.toFixed(1)}%</div>
-                    <div class="analysis-item-bar">
-                        <div class="analysis-item-fill" style="width: ${Math.min(100, analysis.lowerRatio)}%"></div>
-                    </div>
+                    <div class="analysis-item-label">Erkannter Schriftstil: <strong>${lastDrawingAnalysis.style.toUpperCase()}</strong></div>
                 </div>
                 <div class="analysis-item">
-                    <div class="analysis-item-label">Ziffern: ${analysis.digitRatio.toFixed(1)}%</div>
+                    <div class="analysis-item-label">Druckintensität: ${lastDrawingAnalysis.pressure.toFixed(1)}%</div>
                     <div class="analysis-item-bar">
-                        <div class="analysis-item-fill" style="width: ${Math.min(100, analysis.digitRatio * 5)}%"></div>
+                        <div class="analysis-item-fill" style="width: ${lastDrawingAnalysis.pressure}%"></div>
                     </div>
-                </div>
-                <div class="analysis-item">
-                    <div class="analysis-item-label">Durchschn. Wortlänge: <strong>${analysis.avgLength.toFixed(2)}</strong> Zeichen</div>
                 </div>
             `;
 
             document.getElementById('handwritingAnalysis').innerHTML = html;
         });
 
-        // Mimic button
-        document.getElementById('mimicBtn').addEventListener('click', () => {
-            const handwritingSample = document.getElementById('handwritingSample').value;
-            const textToMimic = document.getElementById('textInput').value;
+        // Mimic with drawing
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey && lastDrawingAnalysis) {
+                const text = document.getElementById('textInput').value;
+                if (!text) {
+                    alert('Bitte geben Sie einen Text ein!');
+                    return;
+                }
 
-            if (!handwritingSample) {
-                alert('Bitte analysieren Sie zunächst ein Schriftmuster!');
+                const mimicked = analyzer.convert(text, lastDrawingAnalysis.style);
+                document.getElementById('mimicDisplay').textContent = mimicked;
+                document.getElementById('mimicSection').style.display = 'grid';
+                document.getElementById('mimicSection').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        // Mimic button (Ctrl+Enter or click)
+        canvas.addEventListener('dblclick', () => {
+            if (!lastDrawingAnalysis) {
+                alert('Bitte analysieren Sie zuerst Ihre Zeichnung!');
                 return;
             }
 
-            if (!textToMimic) {
-                alert('Bitte geben Sie einen Text ein, den Sie nachahmen möchten!');
+            const text = document.getElementById('textInput').value;
+            if (!text) {
+                alert('Bitte geben Sie einen Text ein!');
                 return;
             }
 
-            // Determine best style from handwriting analysis
-            const bestStyle = analyzer.determineBestStyle(handwritingSample);
-            
-            // Convert the text using the determined style
-            const mimicked = analyzer.convert(textToMimic, bestStyle);
-            
-            // Get analysis data
-            const analysis = analyzer.analyze(handwritingSample);
-
-            // Update mimic display
+            const mimicked = analyzer.convert(text, lastDrawingAnalysis.style);
             document.getElementById('mimicDisplay').textContent = mimicked;
-            
-            // Update comparison
-            document.getElementById('origLength').textContent = `${analysis.length} Zeichen`;
-            document.getElementById('origWords').textContent = `${analysis.words} Wörter`;
-            document.getElementById('origUpperRatio').textContent = `${analysis.upperRatio.toFixed(1)}%`;
-            document.getElementById('origDigitRatio').textContent = `${analysis.digitRatio.toFixed(1)}%`;
-
-            // Show mimic section
             document.getElementById('mimicSection').style.display = 'grid';
             document.getElementById('mimicSection').scrollIntoView({ behavior: 'smooth' });
         });
