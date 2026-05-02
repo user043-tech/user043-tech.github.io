@@ -225,6 +225,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
+            margin-bottom: 40px;
         }
 
         @media (max-width: 1200px) {
@@ -356,6 +357,26 @@
             border-radius: 50%;
         }
 
+        .mimic-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+            grid-column: 1 / -1;
+        }
+
+        .mimic-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
         footer {
             text-align: center;
             padding: 30px;
@@ -424,6 +445,13 @@
             </div>
         </div>
 
+        <!-- ACTION BUTTON: Mimic (Outside the main grid, more visible) -->
+        <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 40px;">
+            <button id="mimicNowBtn" class="mimic-button" style="display: none;">
+                🎨 TEXT MIT IHRER SCHRIFT NACHAHMEN
+            </button>
+        </div>
+
         <!-- OUTPUT SECTION -->
         <div class="output-section">
             <!-- Converted Text Output -->
@@ -445,12 +473,12 @@
         </div>
 
         <!-- Mimic Section -->
-        <div class="output-section" id="mimicSection" style="display: none; margin-top: 30px;">
+        <div class="output-section" id="mimicSection" style="display: none;">
             <div class="mimic-section">
                 <div class="success-badge">✓ Nachgeahmte Schrift</div>
                 <h2>🎨 Mit Ihrer Schrift konvertiert</h2>
                 <div id="mimicDisplay" class="converted-text-display"></div>
-                <button id="copyMimicBtn" class="btn-secondary" style="margin-top: 15px;">📋 Kopieren</button>
+                <button id="copyMimicBtn" class="btn-secondary">📋 Kopieren</button>
             </div>
 
             <div class="output-card">
@@ -707,10 +735,13 @@
             `;
 
             document.getElementById('handwritingAnalysis').innerHTML = html;
+            
+            // Show mimic button
+            document.getElementById('mimicNowBtn').style.display = 'block';
         });
 
-        // Mimic with drawing (Doppelklick auf Canvas)
-        canvas.addEventListener('dblclick', () => {
+        // Mimic button
+        document.getElementById('mimicNowBtn').addEventListener('click', () => {
             if (!lastDrawingAnalysis) {
                 alert('Bitte analysieren Sie zuerst Ihre Zeichnung!');
                 return;
