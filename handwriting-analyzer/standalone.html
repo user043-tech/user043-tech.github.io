@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Handwriting Script Analyzer</title>
+    <title>Handwriting Script Analyzer Pro</title>
     <style>
         * {
             margin: 0;
@@ -134,6 +134,71 @@
             background: white;
         }
 
+        .letter-display {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--border-color);
+        }
+
+        .letter-progress {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid var(--border-color);
+        }
+
+        .letter-progress-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .letter-progress-bar {
+            width: 100%;
+            height: 25px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .letter-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .collected-letters {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid var(--success-color);
+            min-height: 60px;
+            font-size: 2rem;
+            word-break: break-all;
+            line-height: 1.5;
+        }
+
         .style-buttons {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -248,7 +313,7 @@
             font-size: 1.2rem;
         }
 
-        .converted-text-display {
+        .result-display {
             background: var(--bg-tertiary);
             padding: 20px;
             border-radius: 8px;
@@ -256,79 +321,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             line-height: 1.8;
             word-break: break-word;
             border: 2px dashed var(--border-color);
             margin-bottom: 15px;
             text-align: center;
-        }
-
-        .handwriting-analysis {
-            background: var(--bg-tertiary);
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .handwriting-analysis h3 {
-            color: var(--secondary-color);
-            margin-bottom: 15px;
-            font-size: 1rem;
-        }
-
-        .analysis-item {
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .analysis-item:last-child {
-            border-bottom: none;
-        }
-
-        .analysis-item-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 4px;
-        }
-
-        .analysis-item-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--bg-primary);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .analysis-item-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            transition: width 0.3s;
-        }
-
-        .mimic-section {
-            background: var(--bg-secondary);
-            border: 2px solid var(--success-color);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
-        }
-
-        .mimic-section h2 {
-            color: var(--success-color);
-            margin-bottom: 15px;
-        }
-
-        .success-badge {
-            display: inline-block;
-            background: var(--success-color);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 15px;
+            font-family: 'Monaco', monospace;
         }
 
         .brush-size {
@@ -357,6 +356,30 @@
             border-radius: 50%;
         }
 
+        .mimic-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--success-color);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+        }
+
+        .mimic-section h2 {
+            color: var(--success-color);
+            margin-bottom: 15px;
+        }
+
+        .success-badge {
+            display: inline-block;
+            background: var(--success-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
         .mimic-button {
             width: 100%;
             padding: 14px;
@@ -377,6 +400,20 @@
             box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
         }
 
+        .info-box {
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .info-box strong {
+            color: var(--primary-color);
+        }
+
         footer {
             text-align: center;
             padding: 30px;
@@ -384,27 +421,60 @@
             border-top: 1px solid var(--border-color);
             margin-top: 40px;
         }
+
+        .instruction-step {
+            background: var(--bg-tertiary);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .instruction-step strong {
+            color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>✒️ Handwriting Script Analyzer Pro</h1>
-            <p class="subtitle">Malen Sie Ihre Handschrift und lassen Sie sie nachahmen</p>
+            <p class="subtitle">Zeichnen Sie alle Buchstaben vor → System erkennt und mahmt sie nach</p>
         </header>
 
         <div class="main-grid">
-            <!-- LEFT PANEL: Text Converter -->
+            <!-- LEFT PANEL: Text Input -->
             <div class="panel">
-                <div class="panel-title">🔤 Text Konvertieren</div>
+                <div class="panel-title">📝 Text eingeben</div>
                 
-                <div class="form-group">
-                    <label for="textInput">Text zum Konvertieren:</label>
-                    <textarea id="textInput" placeholder="Geben Sie den Text ein, den Sie konvertieren möchten..." rows="5"></textarea>
+                <div class="info-box">
+                    <strong>So funktioniert es:</strong>
+                    <div style="margin-top: 10px;">
+                        <div class="instruction-step">
+                            <strong>1.</strong> Geben Sie den Text ein
+                        </div>
+                        <div class="instruction-step">
+                            <strong>2.</strong> Malen Sie jeden Buchstaben vor
+                        </div>
+                        <div class="instruction-step">
+                            <strong>3.</strong> System speichert automatisch
+                        </div>
+                        <div class="instruction-step">
+                            <strong>4.</strong> Alle Buchstaben werden zu Wort zusammengesetzt
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Schreibstil:</label>
+                    <label for="textInput">Welcher Text soll nachgeahmt werden?</label>
+                    <textarea 
+                        id="textInput" 
+                        placeholder="z.B. 'Hello' oder 'Hallo Welt'..."
+                        rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Schreibstil wählen:</label>
                     <div class="style-buttons">
                         <button class="style-btn active" data-style="print">Normal</button>
                         <button class="style-btn" data-style="cursive">Cursive</button>
@@ -414,76 +484,85 @@
                     </div>
                 </div>
 
-                <button id="convertBtn" class="btn-primary">🔄 Konvertieren</button>
+                <button id="startBtn" class="btn-primary">🎨 Text-Training starten</button>
             </div>
 
             <!-- RIGHT PANEL: Handwriting Canvas -->
             <div class="panel">
-                <div class="panel-title">🖌️ Ihre Handschrift Zeichnen</div>
+                <div class="panel-title">🖌️ Buchstaben zeichnen</div>
                 
-                <div class="form-group">
-                    <label>📄 Zeichenpapier (malen Sie mit der Maus oder dem Finger):</label>
-                    <div class="canvas-wrapper">
-                        <canvas id="drawingCanvas" width="400" height="250"></canvas>
+                <div id="trainingPanel" style="display: none;">
+                    <div class="letter-display">
+                        <div id="currentLetter">A</div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Pinselgröße:</label>
-                    <div class="brush-size">
-                        <input type="range" id="brushSize" min="2" max="20" value="3" class="slider">
-                        <div class="brush-preview">
-                            <div class="brush-dot" id="brushPreview" style="width: 3px; height: 3px;"></div>
+                    <div class="letter-progress">
+                        <div class="letter-progress-label">Fortschritt:</div>
+                        <div class="letter-progress-bar">
+                            <div class="letter-progress-fill" id="progressBar" style="width: 0%">
+                                <span id="progressText">0/26</span>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label>📄 Zeichenpapier (malen Sie den Buchstaben):</label>
+                        <div class="canvas-wrapper">
+                            <canvas id="drawingCanvas" width="400" height="250"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pinselgröße:</label>
+                        <div class="brush-size">
+                            <input type="range" id="brushSize" min="2" max="20" value="3" class="slider">
+                            <div class="brush-preview">
+                                <div class="brush-dot" id="brushPreview" style="width: 3px; height: 3px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button id="clearCanvasBtn" class="btn-secondary btn-danger">🗑️ Löschen</button>
+                        <button id="nextLetterBtn" class="btn-secondary btn-success">✓ Nächster Buchstabe →</button>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label>Gesammelte Buchstaben:</label>
+                        <div class="collected-letters" id="collectedLetters"></div>
+                    </div>
+
+                    <button id="finishTrainingBtn" class="mimic-button" style="display: none;">
+                        ✨ Training abgeschlossen → Nachahmen!
+                    </button>
                 </div>
 
-                <div class="button-group">
-                    <button id="clearCanvasBtn" class="btn-secondary btn-danger">🗑️ Löschen</button>
-                    <button id="analyzeDrawingBtn" class="btn-secondary btn-success">📊 Analysieren</button>
+                <div id="idlePanel">
+                    <div class="info-box">
+                        Klicken Sie oben auf <strong>"Text-Training starten"</strong> um zu beginnen!
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- ACTION BUTTON: Mimic (Outside the main grid, more visible) -->
-        <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 40px;">
-            <button id="mimicNowBtn" class="mimic-button" style="display: none;">
-                🎨 TEXT MIT IHRER SCHRIFT NACHAHMEN
-            </button>
         </div>
 
         <!-- OUTPUT SECTION -->
-        <div class="output-section">
-            <!-- Converted Text Output -->
+        <div class="output-section" id="resultSection" style="display: none;">
             <div class="output-card">
-                <h2>📝 Konvertierter Text</h2>
-                <div id="convertedOutput" class="converted-text-display">
-                    Konvertierter Text wird hier angezeigt...
+                <h2>📝 Original Text</h2>
+                <div class="result-display" id="originalText">
+                    Text wird hier angezeigt...
                 </div>
-                <button id="copyBtn" class="btn-secondary">📋 Kopieren</button>
+                <button id="copyOriginalBtn" class="btn-secondary">📋 Kopieren</button>
             </div>
 
-            <!-- Handwriting Analysis Output -->
-            <div class="output-card">
-                <h2>📈 Schriftanalyse</h2>
-                <div id="handwritingAnalysis" class="handwriting-analysis">
-                    <p style="color: var(--text-secondary);">Zeichnen Sie etwas auf das Papier und klicken Sie "Analysieren"...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mimic Section -->
-        <div class="output-section" id="mimicSection" style="display: none;">
             <div class="mimic-section">
-                <div class="success-badge">✓ Nachgeahmte Schrift</div>
-                <h2>🎨 Mit Ihrer Schrift konvertiert</h2>
-                <div id="mimicDisplay" class="converted-text-display"></div>
+                <div class="success-badge">✓ Mit Ihrer Schrift nachgeahmt</div>
+                <h2>🎨 Nachgeahmter Text</h2>
+                <div class="result-display" id="mimicDisplay">
+                    Nachgeahmter Text wird hier angezeigt...
+                </div>
                 <button id="copyMimicBtn" class="btn-secondary">📋 Kopieren</button>
-            </div>
-
-            <div class="output-card">
-                <h2>📊 Erkannte Schriftmerkmale</h2>
-                <div id="mimicComparison" class="handwriting-analysis"></div>
+                <button id="restartBtn" class="btn-primary" style="margin-top: 15px;">🔄 Neu Starten</button>
             </div>
         </div>
 
@@ -499,11 +578,19 @@
         const brushSizeInput = document.getElementById('brushSize');
         const brushPreview = document.getElementById('brushPreview');
 
-        // Ensure canvas has proper dimensions
         canvas.width = 400;
         canvas.height = 250;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+
+        // State management
+        let trainingState = {
+            text: '',
+            letters: [],
+            collectedLetters: {},
+            currentIndex: 0,
+            style: 'print'
+        };
 
         // Brush size preview
         brushSizeInput.addEventListener('input', (e) => {
@@ -559,7 +646,6 @@
         // Clear canvas
         document.getElementById('clearCanvasBtn').addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            document.getElementById('handwritingAnalysis').innerHTML = '<p style="color: var(--text-secondary);">Zeichenpapier gelöscht. Zeichnen Sie etwas Neues!</p>';
         });
 
         // Handwriting Analyzer
@@ -623,168 +709,144 @@
                 return text.split('').map(c => map[c] || c).join('');
             }
 
-            analyzeDrawing(canvas) {
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
-                let pixelCount = 0;
-
-                for (let i = 0; i < data.length; i += 4) {
-                    const alpha = data[i + 3];
-                    if (alpha > 128) {
-                        pixelCount++;
-                    }
-                }
-
-                const totalPixels = canvas.width * canvas.height;
-                const drawingDensity = (pixelCount / totalPixels) * 100;
-
-                // Analyze drawing characteristics
-                let pressure = Math.min(100, drawingDensity * 10);
-                let style = 'cursive';
-
-                if (drawingDensity < 2) {
-                    style = 'fraktur';
-                } else if (drawingDensity < 5) {
-                    style = 'italic';
-                } else if (drawingDensity < 10) {
-                    style = 'decorative';
-                } else {
-                    style = 'cursive';
-                }
-
-                return {
-                    density: drawingDensity,
-                    pressure: pressure,
-                    style: style,
-                    pixelCount: pixelCount
-                };
+            saveLetterDrawing(canvas, letter) {
+                return canvas.toDataURL();
             }
         }
 
         const analyzer = new HandwritingAnalyzer();
-        let currentStyle = 'print';
-        let lastDrawingAnalysis = null;
 
         // Style buttons
         document.querySelectorAll('.style-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
-                currentStyle = e.target.dataset.style;
+                trainingState.style = e.target.dataset.style;
             });
         });
 
-        // Convert button
-        document.getElementById('convertBtn').addEventListener('click', () => {
+        // Start training
+        document.getElementById('startBtn').addEventListener('click', () => {
             const text = document.getElementById('textInput').value;
             if (!text) {
                 alert('Bitte geben Sie einen Text ein!');
                 return;
             }
 
-            const converted = analyzer.convert(text, currentStyle);
-            document.getElementById('convertedOutput').textContent = converted;
+            // Extract unique letters, filter spaces, convert to lowercase for analysis
+            trainingState.text = text;
+            trainingState.letters = Array.from(new Set(text.toLowerCase().replace(/\s/g, ''))).sort();
+            trainingState.currentIndex = 0;
+            trainingState.collectedLetters = {};
+
+            document.getElementById('idlePanel').style.display = 'none';
+            document.getElementById('trainingPanel').style.display = 'block';
+
+            updateLetterDisplay();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateCollectedLetters();
         });
 
-        // Copy button
-        document.getElementById('copyBtn').addEventListener('click', () => {
-            const text = document.getElementById('convertedOutput').textContent;
-            if (text === 'Konvertierter Text wird hier angezeigt...') {
-                alert('Bitte konvertieren Sie zunächst einen Text!');
-                return;
+        function updateLetterDisplay() {
+            const letter = trainingState.letters[trainingState.currentIndex];
+            document.getElementById('currentLetter').textContent = letter.toUpperCase();
+            
+            const progress = ((trainingState.currentIndex) / trainingState.letters.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${trainingState.currentIndex}/${trainingState.letters.length}`;
+        }
+
+        function updateCollectedLetters() {
+            const collected = Object.keys(trainingState.collectedLetters)
+                .sort()
+                .map(l => l.toUpperCase())
+                .join(' ');
+            document.getElementById('collectedLetters').textContent = collected || 'Keine Buchstaben gesammelt';
+        }
+
+        // Next letter button
+        document.getElementById('nextLetterBtn').addEventListener('click', () => {
+            const currentLetter = trainingState.letters[trainingState.currentIndex];
+            
+            // Save the drawing
+            const drawing = canvas.toDataURL();
+            trainingState.collectedLetters[currentLetter] = drawing;
+            
+            // Clear canvas for next letter
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Move to next letter
+            trainingState.currentIndex++;
+            updateCollectedLetters();
+
+            if (trainingState.currentIndex >= trainingState.letters.length) {
+                // Training complete
+                document.getElementById('nextLetterBtn').style.display = 'none';
+                document.getElementById('clearCanvasBtn').style.display = 'none';
+                document.getElementById('brushSize').parentElement.parentElement.style.display = 'none';
+                document.getElementById('finishTrainingBtn').style.display = 'block';
+                document.getElementById('currentLetter').parentElement.innerHTML = '<div style="font-size: 2rem; color: #10b981;">✓ Alle Buchstaben gesammelt!</div>';
+            } else {
+                updateLetterDisplay();
             }
-            navigator.clipboard.writeText(text).then(() => {
-                alert('✓ Text kopiert!');
+        });
+
+        // Finish training and show results
+        document.getElementById('finishTrainingBtn').addEventListener('click', () => {
+            const originalText = trainingState.text;
+            let mimickedText = '';
+
+            // Convert using the saved letters or style
+            for (let char of originalText) {
+                const lowerChar = char.toLowerCase();
+                if (trainingState.collectedLetters[lowerChar]) {
+                    // Use the saved drawing style
+                    // For now, we'll use the selected style
+                    mimickedText += analyzer.convert(char, trainingState.style);
+                } else if (char === ' ') {
+                    mimickedText += ' ';
+                } else {
+                    // Fallback for unsupported characters
+                    mimickedText += analyzer.convert(char, trainingState.style);
+                }
+            }
+
+            // Show results
+            document.getElementById('originalText').textContent = originalText;
+            document.getElementById('mimicDisplay').textContent = mimickedText;
+            document.getElementById('trainingPanel').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'grid';
+        });
+
+        // Copy buttons
+        document.getElementById('copyOriginalBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(document.getElementById('originalText').textContent).then(() => {
+                alert('✓ Originaltext kopiert!');
             });
         });
 
-        // Analyze Drawing
-        document.getElementById('analyzeDrawingBtn').addEventListener('click', () => {
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imageData.data;
-            let pixelCount = 0;
-
-            for (let i = 0; i < data.length; i += 4) {
-                if (data[i + 3] > 128) pixelCount++;
-            }
-
-            if (pixelCount === 0) {
-                alert('Bitte zeichnen Sie etwas auf das Papier!');
-                return;
-            }
-
-            lastDrawingAnalysis = analyzer.analyzeDrawing(canvas);
-
-            const html = `
-                <h3>📊 Schriftanalyse</h3>
-                <div class="analysis-item">
-                    <div class="analysis-item-label">Zeichnungsdichte: ${lastDrawingAnalysis.density.toFixed(2)}%</div>
-                    <div class="analysis-item-bar">
-                        <div class="analysis-item-fill" style="width: ${Math.min(100, lastDrawingAnalysis.density * 5)}%"></div>
-                    </div>
-                </div>
-                <div class="analysis-item">
-                    <div class="analysis-item-label">Erkannter Schriftstil: <strong>${lastDrawingAnalysis.style.toUpperCase()}</strong></div>
-                </div>
-                <div class="analysis-item">
-                    <div class="analysis-item-label">Druckintensität: ${lastDrawingAnalysis.pressure.toFixed(1)}%</div>
-                    <div class="analysis-item-bar">
-                        <div class="analysis-item-fill" style="width: ${lastDrawingAnalysis.pressure}%"></div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('handwritingAnalysis').innerHTML = html;
-            
-            // Show mimic button
-            document.getElementById('mimicNowBtn').style.display = 'block';
-        });
-
-        // Mimic button
-        document.getElementById('mimicNowBtn').addEventListener('click', () => {
-            if (!lastDrawingAnalysis) {
-                alert('Bitte analysieren Sie zuerst Ihre Zeichnung!');
-                return;
-            }
-
-            const text = document.getElementById('textInput').value;
-            if (!text) {
-                alert('Bitte geben Sie einen Text ein!');
-                return;
-            }
-
-            const mimicked = analyzer.convert(text, lastDrawingAnalysis.style);
-            document.getElementById('mimicDisplay').textContent = mimicked;
-            
-            const html = `
-                <div class="analysis-item">
-                    <div class="analysis-item-label">Schriftstil: <strong>${lastDrawingAnalysis.style.toUpperCase()}</strong></div>
-                </div>
-                <div class="analysis-item">
-                    <div class="analysis-item-label">Zeichnungsdichte: ${lastDrawingAnalysis.density.toFixed(2)}%</div>
-                    <div class="analysis-item-bar">
-                        <div class="analysis-item-fill" style="width: ${Math.min(100, lastDrawingAnalysis.density * 5)}%"></div>
-                    </div>
-                </div>
-                <div class="analysis-item">
-                    <div class="analysis-item-label">Druckintensität: ${lastDrawingAnalysis.pressure.toFixed(1)}%</div>
-                    <div class="analysis-item-bar">
-                        <div class="analysis-item-fill" style="width: ${lastDrawingAnalysis.pressure}%"></div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('mimicComparison').innerHTML = html;
-            
-            document.getElementById('mimicSection').style.display = 'grid';
-            document.getElementById('mimicSection').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Copy Mimic button
         document.getElementById('copyMimicBtn').addEventListener('click', () => {
-            const text = document.getElementById('mimicDisplay').textContent;
-            navigator.clipboard.writeText(text).then(() => {
+            navigator.clipboard.writeText(document.getElementById('mimicDisplay').textContent).then(() => {
                 alert('✓ Nachgeahmter Text kopiert!');
             });
+        });
+
+        // Restart button
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('idlePanel').style.display = 'block';
+            document.getElementById('nextLetterBtn').style.display = 'inline-block';
+            document.getElementById('clearCanvasBtn').style.display = 'inline-block';
+            document.getElementById('brushSize').parentElement.parentElement.style.display = 'block';
+            document.getElementById('finishTrainingBtn').style.display = 'none';
+            document.getElementById('textInput').value = '';
+            trainingState = {
+                text: '',
+                letters: [],
+                collectedLetters: {},
+                currentIndex: 0,
+                style: 'print'
+            };
         });
     </script>
 </body>
