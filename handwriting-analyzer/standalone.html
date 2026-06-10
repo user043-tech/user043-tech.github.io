@@ -314,20 +314,32 @@
         }
 
         .result-display {
-            background: var(--bg-tertiary);
+            background: white;
             padding: 20px;
             border-radius: 8px;
-            min-height: 100px;
+            min-height: 150px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            line-height: 1.8;
+            line-height: 2;
             word-break: break-word;
-            border: 2px dashed var(--border-color);
+            border: 2px solid var(--border-color);
             margin-bottom: 15px;
             text-align: center;
-            font-family: 'Monaco', monospace;
+            flex-wrap: wrap;
+            gap: 5px;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .mimic-letter-image {
+            display: inline-block;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            padding: 2px;
         }
 
         .brush-size {
@@ -460,7 +472,7 @@
                             <strong>3.</strong> System speichert automatisch
                         </div>
                         <div class="instruction-step">
-                            <strong>4.</strong> Alle Buchstaben werden zu Wort zusammengesetzt
+                            <strong>4.</strong> Alle Buchstaben werden mit Ihrer Schrift zusammengesetzt
                         </div>
                     </div>
                 </div>
@@ -557,11 +569,11 @@
 
             <div class="mimic-section">
                 <div class="success-badge">✓ Mit Ihrer Schrift nachgeahmt</div>
-                <h2>🎨 Nachgeahmter Text</h2>
+                <h2>🎨 Nachgeahmter Text (Ihre Handschrift)</h2>
                 <div class="result-display" id="mimicDisplay">
                     Nachgeahmter Text wird hier angezeigt...
                 </div>
-                <button id="copyMimicBtn" class="btn-secondary">📋 Kopieren</button>
+                <button id="downloadMimicBtn" class="btn-secondary">💾 Als Bild speichern</button>
                 <button id="restartBtn" class="btn-primary" style="margin-top: 15px;">🔄 Neu Starten</button>
             </div>
         </div>
@@ -648,7 +660,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         });
 
-        // Handwriting Analyzer
+        // Handwriting Analyzer mit visueller Nachahmung
         class HandwritingAnalyzer {
             constructor() {
                 this.styleMaps = {
@@ -679,7 +691,7 @@
                     italic: {
                         'a': '𝘢', 'b': '𝘣', 'c': '𝘤', 'd': '𝘥', 'e': '𝘦', 'f': '𝘧',
                         'g': '𝘨', 'h': '𝘩', 'i': '𝘪', 'j': '𝘫', 'k': '𝘬', 'l': '𝘭',
-                        'm': '𝘮', 'n': '𝘯', 'o': '𝘰', 'p': '𝘱', 'q': '𝘲', 'r': '𝘳',
+                        'm': '���', 'n': '𝘯', 'o': '𝘰', 'p': '𝘱', 'q': '𝘲', 'r': '𝘳',
                         's': '𝘴', 't': '𝘵', 'u': '𝘶', 'v': '𝘷', 'w': '𝘸', 'x': '𝘹',
                         'y': '𝘺', 'z': '𝘻',
                         'A': '𝘈', 'B': '𝘉', 'C': '𝘊', 'D': '𝘋', 'E': '𝘌', 'F': '𝘍',
@@ -695,7 +707,7 @@
                         's': '𝔰', 't': '𝔱', 'u': '𝔲', 'v': '𝔳', 'w': '𝔴', 'x': '𝔵',
                         'y': '𝔶', 'z': '𝔷',
                         'A': '𝔄', 'B': '𝔅', 'C': '𝔆', 'D': '𝔇', 'E': '𝔈', 'F': '𝔉',
-                        'G': '𝔊', 'H': '𝔋', 'I': '𝔍', 'J': '𝔎', 'K': '𝔏', 'L': '𝔐',
+                        'G': '𝔊', 'H': '����', 'I': '𝔍', 'J': '𝔎', 'K': '𝔏', 'L': '𝔐',
                         'M': '𝔑', 'N': '𝔒', 'O': '𝔓', 'P': '𝔔', 'Q': '𝔕', 'R': '𝔖',
                         'S': '𝔗', 'T': '𝔘', 'U': '𝔙', 'V': '𝔚', 'W': '𝔛', 'X': '𝔜',
                         'Y': '𝔝', 'Z': '𝔞',
@@ -709,8 +721,40 @@
                 return text.split('').map(c => map[c] || c).join('');
             }
 
-            saveLetterDrawing(canvas, letter) {
-                return canvas.toDataURL();
+            // Erstelle visuellen Output mit gezeichneten Buchstaben
+            createVisualMimic(text, collectedLetters, containerElement) {
+                containerElement.innerHTML = '';
+                
+                for (let char of text) {
+                    const lowerChar = char.toLowerCase();
+                    
+                    if (lowerChar === ' ') {
+                        // Space - Zeilenumbruch
+                        containerElement.appendChild(document.createElement('br'));
+                    } else if (collectedLetters[lowerChar]) {
+                        // Zeige gespeicherte Zeichnung
+                        const img = document.createElement('img');
+                        img.src = collectedLetters[lowerChar];
+                        img.className = 'mimic-letter-image';
+                        img.style.width = '60px';
+                        img.style.height = '60px';
+                        img.title = char.toUpperCase();
+                        img.style.objectFit = 'contain';
+                        containerElement.appendChild(img);
+                    } else {
+                        // Fallback für nicht gezeichnete Buchstaben
+                        const span = document.createElement('span');
+                        span.textContent = char;
+                        span.style.fontSize = '2rem';
+                        span.style.display = 'inline-block';
+                        span.style.minWidth = '50px';
+                        span.style.textAlign = 'center';
+                        span.style.opacity = '0.5';
+                        span.style.margin = '5px';
+                        span.title = 'Nicht gezeichneter Buchstabe: ' + char;
+                        containerElement.appendChild(span);
+                    }
+                }
             }
         }
 
@@ -768,8 +812,8 @@
         document.getElementById('nextLetterBtn').addEventListener('click', () => {
             const currentLetter = trainingState.letters[trainingState.currentIndex];
             
-            // Save the drawing
-            const drawing = canvas.toDataURL();
+            // Save the drawing as image data
+            const drawing = canvas.toDataURL('image/png');
             trainingState.collectedLetters[currentLetter] = drawing;
             
             // Clear canvas for next letter
@@ -794,41 +838,73 @@
         // Finish training and show results
         document.getElementById('finishTrainingBtn').addEventListener('click', () => {
             const originalText = trainingState.text;
-            let mimickedText = '';
 
-            // Convert using the saved letters or style
-            for (let char of originalText) {
-                const lowerChar = char.toLowerCase();
-                if (trainingState.collectedLetters[lowerChar]) {
-                    // Use the saved drawing style
-                    // For now, we'll use the selected style
-                    mimickedText += analyzer.convert(char, trainingState.style);
-                } else if (char === ' ') {
-                    mimickedText += ' ';
-                } else {
-                    // Fallback for unsupported characters
-                    mimickedText += analyzer.convert(char, trainingState.style);
-                }
-            }
-
-            // Show results
+            // Show original text
             document.getElementById('originalText').textContent = originalText;
-            document.getElementById('mimicDisplay').textContent = mimickedText;
+            
+            // Create visual mimic with drawn letters
+            analyzer.createVisualMimic(originalText, trainingState.collectedLetters, document.getElementById('mimicDisplay'));
+
             document.getElementById('trainingPanel').style.display = 'none';
             document.getElementById('resultSection').style.display = 'grid';
         });
 
-        // Copy buttons
+        // Copy button
         document.getElementById('copyOriginalBtn').addEventListener('click', () => {
             navigator.clipboard.writeText(document.getElementById('originalText').textContent).then(() => {
                 alert('✓ Originaltext kopiert!');
             });
         });
 
-        document.getElementById('copyMimicBtn').addEventListener('click', () => {
-            navigator.clipboard.writeText(document.getElementById('mimicDisplay').textContent).then(() => {
-                alert('✓ Nachgeahmter Text kopiert!');
-            });
+        // Download mimic as image
+        document.getElementById('downloadMimicBtn').addEventListener('click', () => {
+            const mimicContainer = document.getElementById('mimicDisplay');
+            
+            // Erstelle temporären Canvas für Screenshot
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = 1200;
+            tempCanvas.height = 600;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Weißer Hintergrund
+            tempCtx.fillStyle = 'white';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            // Zeichne alle Buchstaben-Bilder
+            let x = 30;
+            let y = 50;
+            const itemWidth = 80;
+            const itemHeight = 80;
+            const maxWidth = tempCanvas.width - 40;
+            
+            const images = [];
+            const processNextImage = (index) => {
+                if (index >= Object.keys(trainingState.collectedLetters).length) {
+                    // Alle Bilder verarbeitet - Download starten
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = tempCanvas.toDataURL('image/png');
+                        link.download = 'handwriting-mimic.png';
+                        link.click();
+                    }, 100);
+                    return;
+                }
+                
+                const letterKey = Object.keys(trainingState.collectedLetters)[index];
+                const img = new Image();
+                img.onload = function() {
+                    if (x + itemWidth > maxWidth) {
+                        x = 30;
+                        y += itemHeight + 20;
+                    }
+                    tempCtx.drawImage(img, x, y, itemWidth, itemHeight);
+                    x += itemWidth + 10;
+                    processNextImage(index + 1);
+                };
+                img.src = trainingState.collectedLetters[letterKey];
+            };
+            
+            processNextImage(0);
         });
 
         // Restart button
