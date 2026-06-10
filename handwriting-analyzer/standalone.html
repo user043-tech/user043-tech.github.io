@@ -426,6 +426,16 @@
             color: var(--primary-color);
         }
 
+        .info-notice {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--success-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            color: var(--success-color);
+            font-size: 0.9rem;
+        }
+
         footer {
             text-align: center;
             padding: 30px;
@@ -466,13 +476,13 @@
                             <strong>1.</strong> Geben Sie den Text ein
                         </div>
                         <div class="instruction-step">
-                            <strong>2.</strong> Malen Sie jeden Buchstaben vor
+                            <strong>2.</strong> Malen Sie fehlende Buchstaben
                         </div>
                         <div class="instruction-step">
-                            <strong>3.</strong> System speichert automatisch
+                            <strong>3.</strong> Bereits gezeichnete Buchstaben bleiben erhalten
                         </div>
                         <div class="instruction-step">
-                            <strong>4.</strong> Alle Buchstaben werden mit Ihrer Schrift zusammengesetzt
+                            <strong>4.</strong> Text wird mit Ihrer Schrift zusammengesetzt
                         </div>
                     </div>
                 </div>
@@ -496,7 +506,8 @@
                     </div>
                 </div>
 
-                <button id="startBtn" class="btn-primary">🎨 Text-Training starten</button>
+                <button id="startBtn" class="btn-primary">🎨 Neuen Text verarbeiten</button>
+                <button id="resetBtn" class="btn-secondary" style="margin-top: 10px;">↺ Alle Buchstaben löschen</button>
             </div>
 
             <!-- RIGHT PANEL: Handwriting Canvas -->
@@ -504,15 +515,17 @@
                 <div class="panel-title">🖌️ Buchstaben zeichnen</div>
                 
                 <div id="trainingPanel" style="display: none;">
+                    <div id="infoNotice" class="info-notice" style="display: none;"></div>
+
                     <div class="letter-display">
                         <div id="currentLetter">A</div>
                     </div>
 
                     <div class="letter-progress">
-                        <div class="letter-progress-label">Fortschritt:</div>
+                        <div class="letter-progress-label">Fehlende Buchstaben:</div>
                         <div class="letter-progress-bar">
                             <div class="letter-progress-fill" id="progressBar" style="width: 0%">
-                                <span id="progressText">0/26</span>
+                                <span id="progressText">0/0</span>
                             </div>
                         </div>
                     </div>
@@ -545,13 +558,13 @@
                     </div>
 
                     <button id="finishTrainingBtn" class="mimic-button" style="display: none;">
-                        ✨ Training abgeschlossen → Nachahmen!
+                        ✨ Fertig → Text anzeigen!
                     </button>
                 </div>
 
                 <div id="idlePanel">
                     <div class="info-box">
-                        Klicken Sie oben auf <strong>"Text-Training starten"</strong> um zu beginnen!
+                        Klicken Sie oben auf <strong>"Neuen Text verarbeiten"</strong> um zu beginnen!
                     </div>
                 </div>
             </div>
@@ -574,7 +587,7 @@
                     Nachgeahmter Text wird hier angezeigt...
                 </div>
                 <button id="downloadMimicBtn" class="btn-secondary">💾 Als Bild speichern</button>
-                <button id="restartBtn" class="btn-primary" style="margin-top: 15px;">🔄 Neu Starten</button>
+                <button id="nextTextBtn" class="btn-primary" style="margin-top: 15px;">➕ Neuen Text</button>
             </div>
         </div>
 
@@ -595,11 +608,13 @@
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
+        // Globale Speicherung - Buchstaben bleiben erhalten
+        let globalCollectedLetters = {};
+
         // State management
         let trainingState = {
             text: '',
-            letters: [],
-            collectedLetters: {},
+            neededLetters: [],
             currentIndex: 0,
             style: 'print'
         };
@@ -691,7 +706,7 @@
                     italic: {
                         'a': '𝘢', 'b': '𝘣', 'c': '𝘤', 'd': '𝘥', 'e': '𝘦', 'f': '𝘧',
                         'g': '𝘨', 'h': '𝘩', 'i': '𝘪', 'j': '𝘫', 'k': '𝘬', 'l': '𝘭',
-                        'm': '���', 'n': '𝘯', 'o': '𝘰', 'p': '𝘱', 'q': '𝘲', 'r': '𝘳',
+                        'm': '𝘮', 'n': '𝘯', 'o': '𝘰', 'p': '𝘱', 'q': '𝘲', 'r': '𝘳',
                         's': '𝘴', 't': '𝘵', 'u': '𝘶', 'v': '𝘷', 'w': '𝘸', 'x': '𝘹',
                         'y': '𝘺', 'z': '𝘻',
                         'A': '𝘈', 'B': '𝘉', 'C': '𝘊', 'D': '𝘋', 'E': '𝘌', 'F': '𝘍',
@@ -707,7 +722,7 @@
                         's': '𝔰', 't': '𝔱', 'u': '𝔲', 'v': '𝔳', 'w': '𝔴', 'x': '𝔵',
                         'y': '𝔶', 'z': '𝔷',
                         'A': '𝔄', 'B': '𝔅', 'C': '𝔆', 'D': '𝔇', 'E': '𝔈', 'F': '𝔉',
-                        'G': '𝔊', 'H': '����', 'I': '𝔍', 'J': '𝔎', 'K': '𝔏', 'L': '𝔐',
+                        'G': '𝔊', 'H': '𝔋', 'I': '𝔍', 'J': '𝔎', 'K': '𝔏', 'L': '𝔐',
                         'M': '𝔑', 'N': '𝔒', 'O': '𝔓', 'P': '𝔔', 'Q': '𝔕', 'R': '𝔖',
                         'S': '𝔗', 'T': '𝔘', 'U': '𝔙', 'V': '𝔚', 'W': '𝔛', 'X': '𝔜',
                         'Y': '𝔝', 'Z': '𝔞',
@@ -716,25 +731,17 @@
                 };
             }
 
-            convert(text, style) {
-                const map = this.styleMaps[style] || {};
-                return text.split('').map(c => map[c] || c).join('');
-            }
-
-            // Erstelle visuellen Output mit gezeichneten Buchstaben
-            createVisualMimic(text, collectedLetters, containerElement) {
+            createVisualMimic(text, containerElement) {
                 containerElement.innerHTML = '';
                 
                 for (let char of text) {
                     const lowerChar = char.toLowerCase();
                     
                     if (lowerChar === ' ') {
-                        // Space - Zeilenumbruch
                         containerElement.appendChild(document.createElement('br'));
-                    } else if (collectedLetters[lowerChar]) {
-                        // Zeige gespeicherte Zeichnung
+                    } else if (globalCollectedLetters[lowerChar]) {
                         const img = document.createElement('img');
-                        img.src = collectedLetters[lowerChar];
+                        img.src = globalCollectedLetters[lowerChar];
                         img.className = 'mimic-letter-image';
                         img.style.width = '60px';
                         img.style.height = '60px';
@@ -742,7 +749,6 @@
                         img.style.objectFit = 'contain';
                         containerElement.appendChild(img);
                     } else {
-                        // Fallback für nicht gezeichnete Buchstaben
                         const span = document.createElement('span');
                         span.textContent = char;
                         span.style.fontSize = '2rem';
@@ -777,31 +783,52 @@
                 return;
             }
 
-            // Extract unique letters, filter spaces, convert to lowercase for analysis
             trainingState.text = text;
-            trainingState.letters = Array.from(new Set(text.toLowerCase().replace(/\s/g, ''))).sort();
+            
+            // Nur Buchstaben die NICHT bereits gezeichnet sind
+            const uniqueLetters = Array.from(new Set(text.toLowerCase().replace(/\s/g, '')));
+            trainingState.neededLetters = uniqueLetters.filter(letter => !globalCollectedLetters[letter]).sort();
+            
             trainingState.currentIndex = 0;
-            trainingState.collectedLetters = {};
 
             document.getElementById('idlePanel').style.display = 'none';
             document.getElementById('trainingPanel').style.display = 'block';
 
-            updateLetterDisplay();
+            // Info anzeigen wenn alle Buchstaben schon bekannt sind
+            if (trainingState.neededLetters.length === 0) {
+                document.getElementById('infoNotice').style.display = 'block';
+                document.getElementById('infoNotice').textContent = '✓ Alle Buchstaben sind bereits gespeichert! Klicken Sie auf "Fertig → Text anzeigen!" um den Text zu sehen.';
+                document.getElementById('nextLetterBtn').style.display = 'none';
+                document.getElementById('clearCanvasBtn').style.display = 'none';
+                document.getElementById('brushSize').parentElement.parentElement.style.display = 'none';
+                document.getElementById('finishTrainingBtn').style.display = 'block';
+                document.getElementById('currentLetter').parentElement.innerHTML = '<div style="font-size: 2rem; color: #10b981;">✓ Alle Buchstaben bekannt!</div>';
+            } else {
+                document.getElementById('infoNotice').style.display = 'none';
+                document.getElementById('nextLetterBtn').style.display = 'inline-block';
+                document.getElementById('clearCanvasBtn').style.display = 'inline-block';
+                document.getElementById('brushSize').parentElement.parentElement.style.display = 'block';
+                document.getElementById('finishTrainingBtn').style.display = 'none';
+                updateLetterDisplay();
+            }
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             updateCollectedLetters();
         });
 
         function updateLetterDisplay() {
-            const letter = trainingState.letters[trainingState.currentIndex];
+            if (trainingState.neededLetters.length === 0) return;
+            
+            const letter = trainingState.neededLetters[trainingState.currentIndex];
             document.getElementById('currentLetter').textContent = letter.toUpperCase();
             
-            const progress = ((trainingState.currentIndex) / trainingState.letters.length) * 100;
+            const progress = ((trainingState.currentIndex) / trainingState.neededLetters.length) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('progressText').textContent = `${trainingState.currentIndex}/${trainingState.letters.length}`;
+            document.getElementById('progressText').textContent = `${trainingState.currentIndex}/${trainingState.neededLetters.length}`;
         }
 
         function updateCollectedLetters() {
-            const collected = Object.keys(trainingState.collectedLetters)
+            const collected = Object.keys(globalCollectedLetters)
                 .sort()
                 .map(l => l.toUpperCase())
                 .join(' ');
@@ -810,26 +837,24 @@
 
         // Next letter button
         document.getElementById('nextLetterBtn').addEventListener('click', () => {
-            const currentLetter = trainingState.letters[trainingState.currentIndex];
+            if (trainingState.neededLetters.length === 0) return;
+
+            const currentLetter = trainingState.neededLetters[trainingState.currentIndex];
             
-            // Save the drawing as image data
             const drawing = canvas.toDataURL('image/png');
-            trainingState.collectedLetters[currentLetter] = drawing;
+            globalCollectedLetters[currentLetter] = drawing;
             
-            // Clear canvas for next letter
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Move to next letter
             trainingState.currentIndex++;
             updateCollectedLetters();
 
-            if (trainingState.currentIndex >= trainingState.letters.length) {
-                // Training complete
+            if (trainingState.currentIndex >= trainingState.neededLetters.length) {
                 document.getElementById('nextLetterBtn').style.display = 'none';
                 document.getElementById('clearCanvasBtn').style.display = 'none';
                 document.getElementById('brushSize').parentElement.parentElement.style.display = 'none';
                 document.getElementById('finishTrainingBtn').style.display = 'block';
-                document.getElementById('currentLetter').parentElement.innerHTML = '<div style="font-size: 2rem; color: #10b981;">✓ Alle Buchstaben gesammelt!</div>';
+                document.getElementById('currentLetter').parentElement.innerHTML = '<div style="font-size: 2rem; color: #10b981;">✓ Alle Buchstaben erledigt!</div>';
             } else {
                 updateLetterDisplay();
             }
@@ -839,11 +864,8 @@
         document.getElementById('finishTrainingBtn').addEventListener('click', () => {
             const originalText = trainingState.text;
 
-            // Show original text
             document.getElementById('originalText').textContent = originalText;
-            
-            // Create visual mimic with drawn letters
-            analyzer.createVisualMimic(originalText, trainingState.collectedLetters, document.getElementById('mimicDisplay'));
+            analyzer.createVisualMimic(originalText, document.getElementById('mimicDisplay'));
 
             document.getElementById('trainingPanel').style.display = 'none';
             document.getElementById('resultSection').style.display = 'grid';
@@ -858,29 +880,23 @@
 
         // Download mimic as image
         document.getElementById('downloadMimicBtn').addEventListener('click', () => {
-            const mimicContainer = document.getElementById('mimicDisplay');
-            
-            // Erstelle temporären Canvas für Screenshot
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = 1200;
             tempCanvas.height = 600;
             const tempCtx = tempCanvas.getContext('2d');
             
-            // Weißer Hintergrund
             tempCtx.fillStyle = 'white';
             tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
             
-            // Zeichne alle Buchstaben-Bilder
             let x = 30;
             let y = 50;
             const itemWidth = 80;
             const itemHeight = 80;
             const maxWidth = tempCanvas.width - 40;
             
-            const images = [];
+            const keys = Object.keys(globalCollectedLetters);
             const processNextImage = (index) => {
-                if (index >= Object.keys(trainingState.collectedLetters).length) {
-                    // Alle Bilder verarbeitet - Download starten
+                if (index >= keys.length) {
                     setTimeout(() => {
                         const link = document.createElement('a');
                         link.href = tempCanvas.toDataURL('image/png');
@@ -890,7 +906,7 @@
                     return;
                 }
                 
-                const letterKey = Object.keys(trainingState.collectedLetters)[index];
+                const letterKey = keys[index];
                 const img = new Image();
                 img.onload = function() {
                     if (x + itemWidth > maxWidth) {
@@ -901,28 +917,27 @@
                     x += itemWidth + 10;
                     processNextImage(index + 1);
                 };
-                img.src = trainingState.collectedLetters[letterKey];
+                img.src = globalCollectedLetters[letterKey];
             };
             
             processNextImage(0);
         });
 
-        // Restart button
-        document.getElementById('restartBtn').addEventListener('click', () => {
+        // Next text button
+        document.getElementById('nextTextBtn').addEventListener('click', () => {
             document.getElementById('resultSection').style.display = 'none';
             document.getElementById('idlePanel').style.display = 'block';
-            document.getElementById('nextLetterBtn').style.display = 'inline-block';
-            document.getElementById('clearCanvasBtn').style.display = 'inline-block';
-            document.getElementById('brushSize').parentElement.parentElement.style.display = 'block';
-            document.getElementById('finishTrainingBtn').style.display = 'none';
             document.getElementById('textInput').value = '';
-            trainingState = {
-                text: '',
-                letters: [],
-                collectedLetters: {},
-                currentIndex: 0,
-                style: 'print'
-            };
+            document.getElementById('textInput').focus();
+        });
+
+        // Reset all letters
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if (confirm('Alle gezeichneten Buchstaben löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+                globalCollectedLetters = {};
+                updateCollectedLetters();
+                alert('✓ Alle Buchstaben wurden gelöscht.');
+            }
         });
     </script>
 </body>
