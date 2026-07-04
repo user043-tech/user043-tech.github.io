@@ -619,6 +619,21 @@
             style: 'print'
         };
 
+        // Helper: Extract unique valid letters (lowercase), include German umlauts and ß
+        function getUniqueLettersFromText(text) {
+            if (!text) return [];
+            // Normalize and lowercase, then extract any Unicode letters (covers ä, ö, ü, ß and more)
+            try {
+                const normalized = text.normalize('NFC').toLowerCase();
+                const matches = normalized.match(/\p{L}/gu) || [];
+                return Array.from(new Set(matches));
+            } catch (err) {
+                // Fallback for environments that don't support Unicode property escapes
+                const matches = normalized.match(/[a-zäöüß]/g) || [];
+                return Array.from(new Set(matches));
+            }
+        }
+
         // Brush size preview
         brushSizeInput.addEventListener('input', (e) => {
             const size = parseInt(e.target.value);
@@ -677,66 +692,14 @@
 
         // Handwriting Analyzer mit visueller Nachahmung
         class HandwritingAnalyzer {
-            constructor() {
-                this.styleMaps = {
-                    cursive: {
-                        'a': '𝒂', 'b': '𝒃', 'c': '𝒄', 'd': '𝒅', 'e': '𝒆', 'f': '𝒇',
-                        'g': '𝒈', 'h': '𝒉', 'i': '𝒊', 'j': '𝒋', 'k': '𝒌', 'l': '𝒍',
-                        'm': '𝒎', 'n': '𝒏', 'o': '𝒐', 'p': '𝒑', 'q': '𝒒', 'r': '𝒓',
-                        's': '𝒔', 't': '𝒕', 'u': '𝒖', 'v': '𝒗', 'w': '𝒘', 'x': '𝒙',
-                        'y': '𝒚', 'z': '𝒛',
-                        'A': '𝑨', 'B': '𝑩', 'C': '𝑪', 'D': '𝑫', 'E': '𝑬', 'F': '𝑭',
-                        'G': '𝑮', 'H': '𝑯', 'I': '𝑰', 'J': '𝑱', 'K': '𝑲', 'L': '𝑳',
-                        'M': '𝑴', 'N': '𝑵', 'O': '𝑶', 'P': '𝑷', 'Q': '𝑸', 'R': '𝑹',
-                        'S': '𝑺', 'T': '𝑻', 'U': '𝑼', 'V': '𝑽', 'W': '𝑾', 'X': '𝑿',
-                        'Y': '𝒀', 'Z': '𝒁',
-                    },
-                    decorative: {
-                        'a': '𝓪', 'b': '𝓫', 'c': '𝓬', 'd': '𝓭', 'e': '𝓮', 'f': '𝓯',
-                        'g': '𝓰', 'h': '𝓱', 'i': '𝓲', 'j': '𝓳', 'k': '𝓴', 'l': '𝓵',
-                        'm': '𝓶', 'n': '𝓷', 'o': '𝓸', 'p': '𝓹', 'q': '𝓺', 'r': '𝓻',
-                        's': '𝓼', 't': '𝓽', 'u': '𝓾', 'v': '𝓿', 'w': '𝔀', 'x': '𝔁',
-                        'y': '𝔂', 'z': '𝔃',
-                        'A': '𝓐', 'B': '𝓑', 'C': '𝓒', 'D': '𝓓', 'E': '𝓔', 'F': '𝓕',
-                        'G': '𝓖', 'H': '𝓗', 'I': '𝓘', 'J': '𝓙', 'K': '𝓚', 'L': '𝓛',
-                        'M': '𝓜', 'N': '𝓝', 'O': '𝓞', 'P': '𝓟', 'Q': '𝓠', 'R': '𝓡',
-                        'S': '𝓢', 'T': '𝓣', 'U': '𝓤', 'V': '𝓥', 'W': '𝓦', 'X': '𝓧',
-                        'Y': '𝓨', 'Z': '𝓩',
-                    },
-                    italic: {
-                        'a': '𝘢', 'b': '𝘣', 'c': '𝘤', 'd': '𝘥', 'e': '𝘦', 'f': '𝘧',
-                        'g': '𝘨', 'h': '𝘩', 'i': '𝘪', 'j': '𝘫', 'k': '𝘬', 'l': '𝘭',
-                        'm': '𝘮', 'n': '𝘯', 'o': '𝘰', 'p': '𝘱', 'q': '𝘲', 'r': '𝘳',
-                        's': '𝘴', 't': '𝘵', 'u': '𝘶', 'v': '𝘷', 'w': '𝘸', 'x': '𝘹',
-                        'y': '𝘺', 'z': '𝘻',
-                        'A': '𝘈', 'B': '𝘉', 'C': '𝘊', 'D': '𝘋', 'E': '𝘌', 'F': '𝘍',
-                        'G': '𝘎', 'H': '𝘏', 'I': '𝘐', 'J': '𝘑', 'K': '𝘒', 'L': '𝘓',
-                        'M': '𝘔', 'N': '𝘕', 'O': '𝘖', 'P': '𝘗', 'Q': '𝘘', 'R': '𝘙',
-                        'S': '𝘚', 'T': '𝘛', 'U': '𝘜', 'V': '𝘝', 'W': '𝘞', 'X': '𝘟',
-                        'Y': '𝘠', 'Z': '𝘡',
-                    },
-                    fraktur: {
-                        'a': '𝔞', 'b': '𝔟', 'c': '𝔠', 'd': '𝔡', 'e': '𝔢', 'f': '𝔣',
-                        'g': '𝔤', 'h': '𝔥', 'i': '𝔦', 'j': '𝔧', 'k': '𝔨', 'l': '𝔩',
-                        'm': '𝔪', 'n': '𝔫', 'o': '𝔬', 'p': '𝔭', 'q': '𝔮', 'r': '𝔯',
-                        's': '𝔰', 't': '𝔱', 'u': '𝔲', 'v': '𝔳', 'w': '𝔴', 'x': '𝔵',
-                        'y': '𝔶', 'z': '𝔷',
-                        'A': '𝔄', 'B': '𝔅', 'C': '𝔆', 'D': '𝔇', 'E': '𝔈', 'F': '𝔉',
-                        'G': '𝔊', 'H': '𝔋', 'I': '𝔍', 'J': '𝔎', 'K': '𝔏', 'L': '𝔐',
-                        'M': '𝔑', 'N': '𝔒', 'O': '𝔓', 'P': '𝔔', 'Q': '𝔕', 'R': '𝔖',
-                        'S': '𝔗', 'T': '𝔘', 'U': '𝔙', 'V': '𝔚', 'W': '𝔛', 'X': '𝔜',
-                        'Y': '𝔝', 'Z': '𝔞',
-                    },
-                    print: {}
-                };
-            }
+            constructor() {}
 
             createVisualMimic(text, containerElement) {
                 containerElement.innerHTML = '';
-                
+
                 for (let char of text) {
                     const lowerChar = char.toLowerCase();
-                    
+
                     if (lowerChar === ' ') {
                         containerElement.appendChild(document.createElement('br'));
                     } else if (globalCollectedLetters[lowerChar]) {
@@ -777,34 +740,52 @@
 
         // Start training
         document.getElementById('startBtn').addEventListener('click', () => {
-            const text = document.getElementById('textInput').value;
-            if (!text) {
+            const text = document.getElementById('textInput').value || '';
+            if (!text.trim()) {
                 alert('Bitte geben Sie einen Text ein!');
                 return;
             }
 
             trainingState.text = text;
-            
-            // Nur Buchstaben die NICHT bereits gezeichnet sind
-            const uniqueLetters = Array.from(new Set(text.toLowerCase().replace(/\s/g, '')));
+
+            // Berechne nur gültige Buchstaben (Unicode letters)
+            const uniqueLetters = getUniqueLettersFromText(text);
+
+            if (!uniqueLetters || uniqueLetters.length === 0) {
+                alert('Kein gültiger Buchstabe im Text erkannt. Bitte geben Sie Buchstaben ein (z. B. A–Z, ä, ö, ü, ß).');
+                return;
+            }
+
             trainingState.neededLetters = uniqueLetters.filter(letter => !globalCollectedLetters[letter]).sort();
-            
             trainingState.currentIndex = 0;
+
+            console.debug('Start training for text:', text);
+            console.debug('Unique letters (filtered):', uniqueLetters);
+            console.debug('Needed letters:', trainingState.neededLetters);
+            console.debug('Known letters:', Object.keys(globalCollectedLetters).sort());
 
             document.getElementById('idlePanel').style.display = 'none';
             document.getElementById('trainingPanel').style.display = 'block';
 
             // Info anzeigen wenn alle Buchstaben schon bekannt sind
+            const infoNotice = document.getElementById('infoNotice');
             if (trainingState.neededLetters.length === 0) {
-                document.getElementById('infoNotice').style.display = 'block';
-                document.getElementById('infoNotice').textContent = '✓ Alle Buchstaben sind bereits gespeichert! Klicken Sie auf "Fertig → Text anzeigen!" um den Text zu sehen.';
+                const known = Object.keys(globalCollectedLetters).sort().join(', ') || '(keine)';
+                infoNotice.style.display = 'block';
+                infoNotice.innerHTML = `✓ Alle Buchstaben sind bereits gespeichert!<br><strong>Bekannt:</strong> ${known}<br><strong>Benötigt:</strong> (keine)`;
                 document.getElementById('nextLetterBtn').style.display = 'none';
                 document.getElementById('clearCanvasBtn').style.display = 'none';
                 document.getElementById('brushSize').parentElement.parentElement.style.display = 'none';
                 document.getElementById('finishTrainingBtn').style.display = 'block';
                 document.getElementById('currentLetter').parentElement.innerHTML = '<div style="font-size: 2rem; color: #10b981;">✓ Alle Buchstaben bekannt!</div>';
+                document.getElementById('progressBar').style.width = '100%';
+                document.getElementById('progressText').textContent = `0/0`;
             } else {
-                document.getElementById('infoNotice').style.display = 'none';
+                const known = Object.keys(globalCollectedLetters).sort().join(', ') || '(keine)';
+                infoNotice.style.display = 'block';
+                infoNotice.innerHTML = `<strong>Bekannt:</strong> ${known}<br><strong>Benötigt:</strong> ${trainingState.neededLetters.join(', ')}`;
+
+                document.getElementById('infoNotice').style.display = 'block';
                 document.getElementById('nextLetterBtn').style.display = 'inline-block';
                 document.getElementById('clearCanvasBtn').style.display = 'inline-block';
                 document.getElementById('brushSize').parentElement.parentElement.style.display = 'block';
@@ -817,12 +798,16 @@
         });
 
         function updateLetterDisplay() {
-            if (trainingState.neededLetters.length === 0) return;
-            
+            if (!trainingState.neededLetters || trainingState.neededLetters.length === 0) return;
+
+            // Guard: ensure currentIndex in bounds
+            if (trainingState.currentIndex >= trainingState.neededLetters.length) trainingState.currentIndex = trainingState.neededLetters.length - 1;
+            if (trainingState.currentIndex < 0) trainingState.currentIndex = 0;
+
             const letter = trainingState.neededLetters[trainingState.currentIndex];
-            document.getElementById('currentLetter').textContent = letter.toUpperCase();
-            
-            const progress = ((trainingState.currentIndex) / trainingState.neededLetters.length) * 100;
+            document.getElementById('currentLetter').textContent = letter ? letter.toUpperCase() : '';
+
+            const progress = trainingState.neededLetters.length > 0 ? Math.round((trainingState.currentIndex / trainingState.neededLetters.length) * 100) : 100;
             document.getElementById('progressBar').style.width = progress + '%';
             document.getElementById('progressText').textContent = `${trainingState.currentIndex}/${trainingState.neededLetters.length}`;
         }
@@ -837,15 +822,17 @@
 
         // Next letter button
         document.getElementById('nextLetterBtn').addEventListener('click', () => {
-            if (trainingState.neededLetters.length === 0) return;
+            if (!trainingState.neededLetters || trainingState.neededLetters.length === 0) return;
 
             const currentLetter = trainingState.neededLetters[trainingState.currentIndex];
-            
+
+            // Save the drawing as image data (ensure not blank)
             const drawing = canvas.toDataURL('image/png');
+            // Quick blank-check: PNG of empty canvas still has a predictable header; we'll accept whatever's drawn.
             globalCollectedLetters[currentLetter] = drawing;
-            
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             trainingState.currentIndex++;
             updateCollectedLetters();
 
@@ -855,6 +842,8 @@
                 document.getElementById('brushSize').parentElement.parentElement.style.display = 'none';
                 document.getElementById('finishTrainingBtn').style.display = 'block';
                 document.getElementById('currentLetter').parentElement.innerHTML = '<div style="font-size: 2rem; color: #10b981;">✓ Alle Buchstaben erledigt!</div>';
+                document.getElementById('progressBar').style.width = '100%';
+                document.getElementById('progressText').textContent = `${trainingState.neededLetters.length}/${trainingState.neededLetters.length}`;
             } else {
                 updateLetterDisplay();
             }
@@ -884,16 +873,16 @@
             tempCanvas.width = 1200;
             tempCanvas.height = 600;
             const tempCtx = tempCanvas.getContext('2d');
-            
+
             tempCtx.fillStyle = 'white';
             tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-            
+
             let x = 30;
             let y = 50;
             const itemWidth = 80;
             const itemHeight = 80;
             const maxWidth = tempCanvas.width - 40;
-            
+
             const keys = Object.keys(globalCollectedLetters);
             const processNextImage = (index) => {
                 if (index >= keys.length) {
@@ -905,7 +894,7 @@
                     }, 100);
                     return;
                 }
-                
+
                 const letterKey = keys[index];
                 const img = new Image();
                 img.onload = function() {
@@ -919,7 +908,7 @@
                 };
                 img.src = globalCollectedLetters[letterKey];
             };
-            
+
             processNextImage(0);
         });
 
