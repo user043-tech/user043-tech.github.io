@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Handwriting HTR - TFJS Demo</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
+</head>
+<body>
+  <h1>Handwriting-to-Text (Client-side)</h1>
+  <p>Zeichne eine Zeile Handschrift (links nach rechts) auf dem Canvas.</p>
+  <div class="canvas-wrap">
+    <canvas id="draw-canvas" width="1200" height="200"></canvas>
+  </div>
+  <div class="controls">
+    <button id="clear-btn">Clear</button>
+    <button id="predict-btn">Predict (Client TFJS)</button>
+    <label>Model path: <input id="model-path" type="text" value="model/model.json" /></label>
+  </div>
+  <div id="result">Ergebnis: —</div>
+  <script src="script.js"></script>
+</body>
+</html>
